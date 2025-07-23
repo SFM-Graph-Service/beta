@@ -9,15 +9,15 @@ and service concerns.
 # Import all the model classes to maintain backward compatibility
 from .base_nodes import Node
 from .core_nodes import (
-    Actor, Institution, Policy, Resource, Process, Flow, 
+    Actor, Institution, Policy, Resource, Process, Flow,
     ValueFlow, GovernanceStructure
 )
 from .specialized_nodes import (
-    BeliefSystem, TechnologySystem, Indicator, FeedbackLoop, 
+    BeliefSystem, TechnologySystem, Indicator, FeedbackLoop,
     SystemProperty, AnalyticalContext, PolicyInstrument
 )
 from .behavioral_nodes import (
-    ValueSystem, CeremonialBehavior, InstrumentalBehavior, 
+    ValueSystem, CeremonialBehavior, InstrumentalBehavior,
     ChangeProcess, CognitiveFramework, BehavioralPattern
 )
 from .meta_entities import TimeSlice, SpatialUnit, Scenario
@@ -30,7 +30,7 @@ __all__ = [
     # Base
     'Node',
     # Core nodes
-    'Actor', 'Institution', 'Policy', 'Resource', 'Process', 
+    'Actor', 'Institution', 'Policy', 'Resource', 'Process',
     'Flow', 'ValueFlow', 'GovernanceStructure',
     # Specialized nodes
     'BeliefSystem', 'TechnologySystem', 'Indicator', 'FeedbackLoop',

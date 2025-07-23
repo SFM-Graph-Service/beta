@@ -14,19 +14,20 @@ Key Features:
 
 import uuid
 from datetime import datetime, timezone
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, Optional, Any, Union
 from enum import Enum
 
 
-class ErrorCode(str, Enum):
+class ErrorCode(str, Enum):  # pylint: disable=R0903
+    # Too few public methods - enum classes typically have only value attributes
     """Standardized error codes for SFM operations."""
-    
+
     # Base error codes
     SFM_ERROR = "SFM_ERROR"
     VALIDATION_ERROR = "VALIDATION_ERROR"
     NOT_FOUND_ERROR = "NOT_FOUND_ERROR"
     INTEGRITY_ERROR = "INTEGRITY_ERROR"
-    
+
     # Graph operation errors
     GRAPH_SIZE_EXCEEDED = "GRAPH_SIZE_EXCEEDED"
     GRAPH_OPERATION_ERROR = "GRAPH_OPERATION_ERROR"
@@ -38,12 +39,12 @@ class ErrorCode(str, Enum):
     CREATE_INSTITUTION_FAILED = "CREATE_INSTITUTION_FAILED"
     CREATE_POLICY_FAILED = "CREATE_POLICY_FAILED"
     CREATE_RESOURCE_FAILED = "CREATE_RESOURCE_FAILED"
-    
+
     # Query errors
     QUERY_EXECUTION_ERROR = "QUERY_EXECUTION_ERROR"
     QUERY_TIMEOUT_ERROR = "QUERY_TIMEOUT_ERROR"
     QUERY_SYNTAX_ERROR = "QUERY_SYNTAX_ERROR"
-    
+
     # Database errors
     DATABASE_CONNECTION_ERROR = "DATABASE_CONNECTION_ERROR"
     DATABASE_TRANSACTION_ERROR = "DATABASE_TRANSACTION_ERROR"
@@ -54,10 +55,12 @@ class ErrorCode(str, Enum):
     PERMISSION_DENIED_ERROR = "PERMISSION_DENIED_ERROR"
 
 
-class ErrorContext:
+class ErrorContext:  # pylint: disable=R0902,R0903
+    # R0902: Too many instance attributes - needed for comprehensive error context
+    # R0903: Too few public methods - data containers don't need many methods
     """Container for error context information."""
-    
-    def __init__(
+
+    def __init__(  # pylint: disable=R0913,R0917  # Too many arguments - needed for comprehensive error context
         self,
         operation: Optional[str] = None,
         entity_id: Optional[Union[str, uuid.UUID]] = None,
@@ -76,7 +79,7 @@ class ErrorContext:
         self.session_id = session_id
         self.request_id = request_id
         self.additional_data = additional_data or {}
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert error context to dictionary for serialization."""
         return {
@@ -93,8 +96,8 @@ class ErrorContext:
 
 class SFMError(Exception):
     """Base exception for all SFM-related errors."""
-    
-    def __init__(
+
+    def __init__(  # pylint: disable=R0913,R0917  # Too many arguments - needed for comprehensive error handling
         self,
         message: str,
         error_code: Union[ErrorCode, str] = ErrorCode.SFM_ERROR,
@@ -104,19 +107,15 @@ class SFMError(Exception):
     ):
         self.message = message
         # Handle backward compatibility with string error codes
-        if isinstance(error_code, str):
-            # Try to map to existing ErrorCode, otherwise use default
-            try:
-                self.error_code = ErrorCode(error_code)
-            except ValueError:
-                self.error_code = ErrorCode.SFM_ERROR
-        else:
-            self.error_code = error_code
+        try:
+            self.error_code = ErrorCode(error_code)
+        except ValueError:
+            self.error_code = ErrorCode.SFM_ERROR
         self.context = context or ErrorContext()
         self.remediation = remediation
         self.details = details or {}
         super().__init__(message)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert exception to dictionary for API responses."""
         return {
@@ -132,8 +131,8 @@ class SFMError(Exception):
 
 class SFMValidationError(SFMError):
     """Base class for validation-related errors."""
-    
-    def __init__(
+
+    def __init__(  # pylint: disable=R0913,R0917  # Too many arguments - needed for comprehensive validation error context
         self,
         message: str,
         field: Optional[str] = None,
@@ -163,7 +162,7 @@ class SFMValidationError(SFMError):
 
 class SFMNotFoundError(SFMError):
     """Exception raised when a requested entity is not found."""
-    
+
     def __init__(
         self,
         entity_type: str,
@@ -186,14 +185,17 @@ class SFMNotFoundError(SFMError):
             message=message,
             error_code=ErrorCode.NOT_FOUND_ERROR,
             context=context,
-            remediation=remediation or f"Verify that the {entity_type} exists and you have access to it",
+            remediation=(
+                remediation or
+                f"Verify that the {entity_type} exists and you have access to it"
+            ),
             details=details
         )
 
 
 class SFMIntegrityError(SFMError):
     """Exception raised when data integrity constraints are violated."""
-    
+
     def __init__(
         self,
         message: str,
@@ -214,7 +216,7 @@ class SFMIntegrityError(SFMError):
 # Graph-specific exceptions
 class GraphOperationError(SFMError):
     """Exception for graph operation failures."""
-    
+
     def __init__(
         self,
         message: str,
@@ -234,8 +236,9 @@ class GraphOperationError(SFMError):
 
 class NodeCreationError(GraphOperationError):
     """Exception for node creation failures."""
-    
-    def __init__(
+
+    def __init__(  # pylint: disable=R0913,R0917
+        # Too many arguments - needed for comprehensive node creation error context
         self,
         message: str,
         node_type: str,
@@ -259,8 +262,9 @@ class NodeCreationError(GraphOperationError):
 
 class NodeUpdateError(GraphOperationError):
     """Exception for node update failures."""
-    
-    def __init__(
+
+    def __init__(  # pylint: disable=R0913,R0917
+        # Too many arguments - needed for comprehensive node update error context
         self,
         message: str,
         node_id: Union[str, uuid.UUID],
@@ -284,8 +288,9 @@ class NodeUpdateError(GraphOperationError):
 
 class NodeDeleteError(GraphOperationError):
     """Exception for node deletion failures."""
-    
-    def __init__(
+
+    def __init__(  # pylint: disable=R0913,R0917
+        # Too many arguments - needed for comprehensive node deletion error context
         self,
         message: str,
         node_id: Union[str, uuid.UUID],
@@ -309,8 +314,9 @@ class NodeDeleteError(GraphOperationError):
 
 class RelationshipValidationError(SFMValidationError):
     """Exception for relationship validation failures."""
-    
-    def __init__(
+
+    def __init__(  # pylint: disable=R0913,R0917
+        # Too many arguments - needed for comprehensive relationship validation context
         self,
         message: str,
         source_id: Optional[Union[str, uuid.UUID]] = None,
@@ -340,7 +346,7 @@ class RelationshipValidationError(SFMValidationError):
 # Query-specific exceptions
 class QueryExecutionError(SFMError):
     """Exception for query execution failures."""
-    
+
     def __init__(
         self,
         message: str,
@@ -365,7 +371,7 @@ class QueryExecutionError(SFMError):
 
 class QueryTimeoutError(QueryExecutionError):
     """Exception for query timeout failures."""
-    
+
     def __init__(
         self,
         message: str,
@@ -374,8 +380,10 @@ class QueryTimeoutError(QueryExecutionError):
         context: Optional[ErrorContext] = None
     ):
         details = {"timeout_seconds": timeout_seconds}
-        remediation = f"Try simplifying the query or increasing timeout limit" + \
-                     (f" (current: {timeout_seconds}s)" if timeout_seconds else "")
+        remediation = (
+            "Try simplifying the query or increasing timeout limit" +
+            (f" (current: {timeout_seconds}s)" if timeout_seconds else "")
+        )
         super().__init__(
             message=message,
             query=query,
@@ -389,7 +397,7 @@ class QueryTimeoutError(QueryExecutionError):
 # Database-specific exceptions
 class DatabaseError(SFMError):
     """Base exception for database-related errors."""
-    
+
     def __init__(
         self,
         message: str,
@@ -407,7 +415,7 @@ class DatabaseError(SFMError):
 
 class DatabaseConnectionError(DatabaseError):
     """Exception for database connection failures."""
-    
+
     def __init__(
         self,
         message: str,
@@ -426,7 +434,7 @@ class DatabaseConnectionError(DatabaseError):
 
 class DatabaseTransactionError(DatabaseError):
     """Exception for database transaction failures."""
-    
+
     def __init__(
         self,
         message: str,
@@ -446,7 +454,7 @@ class DatabaseTransactionError(DatabaseError):
 # Security-specific exceptions
 class SecurityValidationError(SFMValidationError):
     """Exception for security validation failures."""
-    
+
     def __init__(
         self,
         message: str,
@@ -467,7 +475,7 @@ class SecurityValidationError(SFMValidationError):
 
 class PermissionDeniedError(SFMError):
     """Exception for permission denied errors."""
-    
+
     def __init__(
         self,
         message: str,
@@ -494,14 +502,16 @@ def create_not_found_error(entity_type: str, entity_id: Union[str, uuid.UUID]) -
     return SFMNotFoundError(entity_type=entity_type, entity_id=entity_id)
 
 
-def create_validation_error(message: str, field: Optional[str] = None, value: Any = None) -> SFMValidationError:
+def create_validation_error(
+    message: str, field: Optional[str] = None, value: Any = None
+) -> SFMValidationError:
     """Create a standardized validation error."""
     return SFMValidationError(message=message, field=field, value=value)
 
 
 def create_node_creation_error(
-    message: str, 
-    node_type: str, 
+    message: str,
+    node_type: str,
     node_id: Optional[Union[str, uuid.UUID]] = None
 ) -> NodeCreationError:
     """Create a standardized node creation error."""
@@ -513,6 +523,8 @@ def create_query_error(message: str, query: Optional[str] = None) -> QueryExecut
     return QueryExecutionError(message=message, query=query)
 
 
-def create_database_error(message: str, database_type: Optional[str] = None) -> DatabaseConnectionError:
+def create_database_error(
+    message: str, database_type: Optional[str] = None
+) -> DatabaseConnectionError:
     """Create a standardized database connection error."""
     return DatabaseConnectionError(message=message, database_type=database_type)

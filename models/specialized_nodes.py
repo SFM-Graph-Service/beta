@@ -102,8 +102,10 @@ class SystemProperty(Node):
     value: Any = None
     unit: Optional[str] = None
     timestamp: datetime = field(default_factory=datetime.now)
-    affected_nodes: List[uuid.UUID] = field(default_factory=lambda: [])  # Nodes that this property applies to
-    contributing_relationships: List[uuid.UUID] = field(default_factory=lambda: [])  # Relationships that contribute to this property
+    # Nodes that this property applies to
+    affected_nodes: List[uuid.UUID] = field(default_factory=lambda: [])
+    # Relationships that contribute to this property
+    contributing_relationships: List[uuid.UUID] = field(default_factory=lambda: [])
     # id, name, and description are inherited from Node
 
 
