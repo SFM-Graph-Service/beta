@@ -29,8 +29,8 @@ from models.sfm_enums import (
 
 
 @dataclass
-class ValueSystem(Node):
-    """Hierarchical value structure that guides institutional behavior."""
+class ValueHierarchy(Node):
+    """Hierarchical value structure that guides institutional behavior (simple version)."""
 
     parent_values: List[uuid.UUID] = field(default_factory=lambda: [])
     priority_weight: Optional[float] = None

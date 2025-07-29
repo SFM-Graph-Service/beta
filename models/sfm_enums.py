@@ -145,6 +145,38 @@ __all__ = [
     'InstitutionalChangeType',
     'TechnologyReadinessLevel',
     'LegitimacySource',
+    'CorrelationType',
+    'EvidenceQuality',
+    'CriteriaType',
+    'MeasurementApproach',
+    'CeremonialInstrumentalType',
+    'ValueJudgmentType',
+    'DigraphNodeType',
+    'ProblemSolvingStage',
+    'InstitutionalScope',
+    'GovernanceMechanism',
+    'CrossImpactType',
+    'EnforcementType',
+    'DecisionMakingType',
+    'TransactionCostType',
+    'CoordinationMechanismType',
+    'CoordinationScope',
+    'CommonsGovernanceType',
+    'SocialValueDimension',
+    'SystemArchetype',
+    # New enums for missing components
+    'ValueSystemType',
+    'SocialFabricIndicatorType',
+    'SocialCostType',
+    'InstitutionalLevel',
+    'NormativeFramework',
+    'EvolutionaryStage',
+    'DependencyStrength',
+    'CriteriaPriority',
+    'CorrelationScale',
+    'BoundaryType',
+    'ProvisioningStage',
+    'ConflictType',
    # Exception classes
     'SFMEnumError',
     'IncompatibleEnumError',
@@ -2227,6 +2259,598 @@ class LegitimacySource(Enum):
     LEGAL_RATIONAL = auto()     # Rules, procedures - impersonal order
     EXPERT = auto()            # Technical knowledge and competence
     DEMOCRATIC = auto()         # Popular consent and participation
+
+
+# ───────────────────────────────────────────────
+# SFM MATRIX AND ANALYSIS ENUMS
+# ───────────────────────────────────────────────
+
+
+class CorrelationType(Enum):
+    """Types of correlations in SFM matrix cells."""
+    POSITIVE = auto()  # Institution supports criteria
+    NEGATIVE = auto()  # Institution hinders criteria
+    NEUTRAL = auto()   # No significant relationship
+    UNKNOWN = auto()   # Relationship unclear
+
+
+class EvidenceQuality(Enum):
+    """Quality levels for evidence supporting matrix cell correlations."""
+    LOW = auto()       # Anecdotal or weak evidence
+    MEDIUM = auto()    # Some empirical support
+    HIGH = auto()      # Strong empirical evidence
+    VERIFIED = auto()  # Peer-reviewed or validated evidence
+
+
+class CriteriaType(Enum):
+    """Types of criteria used in SFM evaluation."""
+    SOCIAL = auto()        # Social well-being indicators
+    ENVIRONMENTAL = auto() # Environmental sustainability
+    ECONOMIC = auto()      # Economic performance
+    CULTURAL = auto()      # Cultural preservation/development
+    POLITICAL = auto()     # Democratic participation
+    TECHNOLOGICAL = auto() # Innovation and technological capacity
+
+
+class MeasurementApproach(Enum):
+    """Approaches for measuring criteria in SFM."""
+    QUANTITATIVE = auto()  # Numerical measurement
+    QUALITATIVE = auto()   # Descriptive assessment
+    MIXED = auto()         # Combined quantitative and qualitative
+    ORDINAL = auto()       # Ranked ordering
+    BINARY = auto()        # Yes/no or present/absent
+
+
+class CeremonialInstrumentalType(Enum):
+    """Classification based on Hayden's ceremonial vs instrumental distinction."""
+    CEREMONIAL = auto()      # Status quo maintaining, traditional
+    INSTRUMENTAL = auto()    # Problem-solving oriented, adaptive
+    MIXED = auto()          # Contains both ceremonial and instrumental elements
+    TRANSITIONAL = auto()   # Moving between ceremonial and instrumental
+
+
+class ValueJudgmentType(Enum):
+    """Types of explicit value judgments in SFM policy analysis."""
+    DISTRIBUTIONAL = auto()  # Who gets what resources/benefits
+    EFFICIENCY = auto()      # Resource allocation efficiency
+    SUSTAINABILITY = auto()  # Long-term environmental/social viability
+    EQUITY = auto()         # Fairness and justice considerations
+    AUTONOMY = auto()       # Self-determination and freedom
+    PARTICIPATION = auto()  # Democratic involvement in decisions
+    PRECAUTIONARY = auto()  # Risk assessment and prevention
+
+
+class DigraphNodeType(Enum):
+    """Types of nodes in digraph analysis."""
+    SOURCE = auto()      # Node with only outgoing dependencies
+    SINK = auto()        # Node with only incoming dependencies
+    INTERMEDIATE = auto() # Node with both incoming and outgoing
+    ISOLATED = auto()    # Node with no dependencies
+    CRITICAL = auto()    # Node whose removal breaks system coherence
+
+
+class ProblemSolvingStage(Enum):
+    """Stages in Hayden's problem-solving sequence."""
+    PROBLEM_IDENTIFICATION = auto()        # Problem identification
+    SYSTEM_BOUNDARY_DETERMINATION = auto() # System boundary determination
+    INSTITUTION_IDENTIFICATION = auto()    # Institution identification
+    CRITERIA_DEVELOPMENT = auto()          # Criteria development
+    MATRIX_CONSTRUCTION = auto()           # Matrix construction
+    POLICY_EVALUATION = auto()             # Policy evaluation
+    IMPLEMENTATION_PLANNING = auto()       # Implementation planning
+    MONITORING_EVALUATION = auto()         # Monitoring and evaluation
+    # Legacy names for compatibility
+    IDENTIFICATION = auto()                # Problem identification (legacy)
+    STATUS_QUO_ANALYSIS = auto()          # Current situation analysis (legacy)
+    ALTERNATIVE_GENERATION = auto()        # Develop alternatives (legacy)
+    CONSEQUENCE_ANALYSIS = auto()          # Evaluate consequences (legacy)
+    SELECTION = auto()                     # Choose solution (legacy)
+    IMPLEMENTATION = auto()                # Implement solution (legacy)
+    EVALUATION = auto()                   # Assess results (legacy)
+
+
+class InstitutionalScope(Enum):
+    """Geographic/social scope of institutional reach."""
+    LOCAL = auto()
+    REGIONAL = auto()
+    NATIONAL = auto()
+    INTERNATIONAL = auto()
+    GLOBAL = auto()
+
+
+class GovernanceMechanism(Enum):
+    """How institutions exercise governance."""
+    HIERARCHICAL = auto()     # Top-down control
+    MARKET_BASED = auto()     # Market mechanisms
+    NETWORK_BASED = auto()    # Collaborative networks
+    COMMUNITY_BASED = auto()  # Community self-governance
+    HYBRID = auto()          # Mixed mechanisms
+
+
+class CrossImpactType(Enum):
+    """Types of cross-impacts between matrix cells."""
+    DIRECT = auto()       # Direct causal relationship
+    INDIRECT = auto()     # Indirect through intermediary
+    SYSTEMIC = auto()     # System-wide effects
+    FEEDBACK = auto()     # Through feedback loops
+    STRUCTURAL = auto()   # Through structural relationships
+
+
+class EnforcementType(Enum):
+    """Mechanisms for institutional enforcement."""
+    LEGAL = auto()        # Legal sanctions
+    SOCIAL = auto()       # Social pressure/norms
+    ECONOMIC = auto()     # Economic incentives/penalties
+    CULTURAL = auto()     # Cultural expectations
+    TECHNICAL = auto()    # Technical constraints
+    SELF_ENFORCING = auto() # Built-in compliance mechanisms
+
+
+class DecisionMakingType(Enum):
+    """Types of decision-making processes in institutions."""
+    AUTOCRATIC = auto()   # Single authority decides
+    DEMOCRATIC = auto()   # Majority vote/consensus
+    TECHNOCRATIC = auto() # Expert-based decisions
+    CONSULTATIVE = auto() # Input from stakeholders
+    DELIBERATIVE = auto() # Extended deliberation process
+    MARKET = auto()      # Market-based allocation
+
+
+class TransactionCostType(Enum):
+    """Types of transaction costs in institutional analysis."""
+    SEARCH_INFORMATION = auto()  # Finding relevant information
+    BARGAINING_NEGOTIATION = auto()  # Contract negotiation
+    MONITORING_ENFORCEMENT = auto()  # Ensuring compliance
+    UNCERTAINTY_RISK = auto()  # Risk and uncertainty costs
+    COORDINATION = auto()  # Coordination between parties
+
+
+class CoordinationMechanismType(Enum):
+    """Types of coordination mechanisms."""
+    PRICE_SYSTEM = auto()  # Market price coordination
+    HIERARCHY = auto()  # Organizational hierarchy
+    CLAN_CULTURE = auto()  # Cultural/social coordination
+    NETWORK = auto()  # Network-based coordination
+    HYBRID = auto()  # Mixed mechanisms
+
+
+class CoordinationScope(Enum):
+    """Scope of coordination mechanisms."""
+    LOCAL = auto()
+    REGIONAL = auto()
+    NATIONAL = auto()
+    INTERNATIONAL = auto()
+    SECTORAL = auto()  # Within specific sectors
+
+
+class CommonsGovernanceType(Enum):
+    """Types of commons governance arrangements."""
+    COMMUNITY_MANAGED = auto()  # Community self-governance
+    GOVERNMENT_MANAGED = auto()  # State management
+    PRIVATE_PROPERTY = auto()  # Private ownership
+    HYBRID_GOVERNANCE = auto()  # Mixed arrangements
+    OPEN_ACCESS = auto()  # No governance (tragedy of commons)
+
+
+class SocialValueDimension(Enum):
+    """Dimensions of social value in Hayden's framework."""
+    LIFE_PROCESS_IMPACT = auto()      # Impact on life processes
+    COMMUNITY_CONTINUITY = auto()     # Effect on community cohesion
+    ENVIRONMENTAL_INTEGRATION = auto() # Environmental harmony
+    CULTURAL_DEVELOPMENT = auto()     # Cultural advancement
+    INSTRUMENTAL_EFFICIENCY = auto()  # Problem-solving effectiveness
+
+
+class SystemArchetype(Enum):
+    """Common system dynamics archetypes in SFM analysis."""
+    LIMITS_TO_GROWTH = auto()     # Growth hitting constraints
+    SHIFTING_BURDEN = auto()      # Quick fixes vs fundamental solutions
+    TRAGEDY_OF_COMMONS = auto()   # Shared resource depletion
+    SUCCESS_TO_SUCCESSFUL = auto() # Winner takes all dynamics
+    FIXES_THAT_FAIL = auto()      # Short-term fixes create long-term problems
+    GROWTH_AND_UNDERINVESTMENT = auto()  # Growth limited by capacity constraints
+
+
+class ValueSystemType(Enum):
+    """Types of value systems in Hayden's framework."""
+    
+    CULTURAL_DOMINANT = auto()  # Dominant cultural values
+    SUBCULTURE_SPECIFIC = auto()  # Specific to subcultural groups
+    INSTITUTIONAL_EMBEDDED = auto()  # Embedded in institutional structures
+    EMERGING_ALTERNATIVE = auto()  # New/emerging value systems
+    TRADITIONAL_CEREMONIAL = auto()  # Traditional ceremonial values
+    INSTRUMENTAL_PROBLEM_SOLVING = auto()  # Problem-solving oriented values
+
+
+class SocialFabricIndicatorType(Enum):
+    """Types of social fabric health indicators."""
+    
+    INSTITUTIONAL_COHERENCE = auto()  # How well institutions work together
+    SOCIAL_INTEGRATION = auto()  # Level of social cohesion
+    ADAPTIVE_CAPACITY = auto()  # Ability to adapt to change
+    LEGITIMACY_STRENGTH = auto()  # Institutional legitimacy
+    PARTICIPATION_QUALITY = auto()  # Quality of democratic participation
+    CONFLICT_RESOLUTION = auto()  # Effectiveness of conflict resolution
+    KNOWLEDGE_INTEGRATION = auto()  # Integration of different knowledge systems
+    VALUE_ALIGNMENT = auto()  # Alignment between values and institutions
+
+
+class SocialCostType(Enum):
+    """Types of social costs per Kapp's theory integrated with SFM."""
+    
+    ENVIRONMENTAL_DEGRADATION = auto()  # Environmental damage costs
+    SOCIAL_DISRUPTION = auto()  # Community/social disruption costs
+    HEALTH_IMPACTS = auto()  # Public health costs
+    INSTITUTIONAL_BREAKDOWN = auto()  # Costs of institutional failure
+    CULTURAL_EROSION = auto()  # Loss of cultural values/practices
+    INEQUALITY_AMPLIFICATION = auto()  # Costs of increasing inequality
+    DEMOCRATIC_DEFICIT = auto()  # Costs of reduced democratic participation
+    FUTURE_GENERATION_BURDEN = auto()  # Intergenerational cost transfer
+
+
+class InstitutionalLevel(Enum):
+    """Levels in institutional holarchy."""
+    
+    META_CONSTITUTIONAL = auto()  # Constitutional/foundational level
+    CONSTITUTIONAL = auto()  # Basic rules and structures
+    COLLECTIVE_CHOICE = auto()  # Policy-making level
+    OPERATIONAL = auto()  # Day-to-day operations
+    LOCAL_PRACTICE = auto()  # Local implementation and practice
+
+
+class NormativeFramework(Enum):
+    """Normative frameworks for evaluating institutions."""
+    
+    LIFE_PROCESS_ENHANCEMENT = auto()  # Enhances life processes
+    COMMUNITY_CONTINUITY = auto()  # Supports community continuity
+    ENVIRONMENTAL_SUSTAINABILITY = auto()  # Environmental stewardship
+    DEMOCRATIC_PARTICIPATION = auto()  # Enables democratic participation
+    SOCIAL_EQUITY = auto()  # Promotes social equity
+    CULTURAL_DEVELOPMENT = auto()  # Supports cultural development
+    PROBLEM_SOLVING_EFFECTIVENESS = auto()  # Effective problem solving
+
+
+class EvolutionaryStage(Enum):
+    """Stages of institutional evolution."""
+    
+    EMERGENCE = auto()  # Institution is emerging
+    ESTABLISHMENT = auto()  # Institution is being established
+    MATURATION = auto()  # Institution is maturing
+    ADAPTATION = auto()  # Institution is adapting to change
+    DECLINE = auto()  # Institution is declining
+    TRANSFORMATION = auto()  # Institution is being transformed
+    REPLACEMENT = auto()  # Institution is being replaced
+
+
+class DependencyStrength(Enum):
+    """Strength of dependencies between matrix cells."""
+    
+    NONE = auto()  # No dependency
+    WEAK = auto()  # Weak dependency
+    MODERATE = auto()  # Moderate dependency
+    STRONG = auto()  # Strong dependency
+    CRITICAL = auto()  # Critical dependency
+
+
+class CriteriaPriority(Enum):
+    """Priority classification for SFM criteria per Hayden's framework."""
+    
+    PRIMARY = auto()  # Life process enhancement criteria
+    SECONDARY = auto()  # Efficiency and instrumental criteria
+    TERTIARY = auto()  # Supporting or contextual criteria
+
+
+class CorrelationScale(Enum):
+    """Standardized correlation scale for SFM (-3 to +3)."""
+    
+    STRONGLY_NEGATIVE = auto()  # -3: Strong negative correlation
+    MODERATELY_NEGATIVE = auto()  # -2: Moderate negative correlation
+    WEAKLY_NEGATIVE = auto()  # -1: Weak negative correlation
+    NEUTRAL = auto()  # 0: No correlation or neutral
+    WEAKLY_POSITIVE = auto()  # +1: Weak positive correlation
+    MODERATELY_POSITIVE = auto()  # +2: Moderate positive correlation
+    STRONGLY_POSITIVE = auto()  # +3: Strong positive correlation
+
+
+class BoundaryType(Enum):
+    """Types of system boundaries in SFM analysis."""
+    
+    GEOGRAPHIC = auto()  # Geographic boundaries
+    INSTITUTIONAL = auto()  # Institutional boundaries
+    TEMPORAL = auto()  # Time boundaries
+    SECTORAL = auto()  # Economic sector boundaries
+    FUNCTIONAL = auto()  # Functional system boundaries
+    ANALYTICAL = auto()  # Analytical convenience boundaries
+
+
+class ProvisioningStage(Enum):
+    """Stages in the societal provisioning process."""
+    
+    RESOURCE_EXTRACTION = auto()  # Resource extraction from environment
+    PRODUCTION = auto()  # Transformation of resources
+    DISTRIBUTION = auto()  # Distribution of goods/services
+    CONSUMPTION = auto()  # Use of goods/services
+    WASTE_DISPOSAL = auto()  # Waste and disposal management
+    REGENERATION = auto()  # Environmental regeneration
+
+
+class ConflictType(Enum):
+    """Types of institutional conflicts in SFM."""
+    
+    VALUE_CONFLICT = auto()  # Conflicting values
+    RESOURCE_CONFLICT = auto()  # Resource competition
+    AUTHORITY_CONFLICT = auto()  # Authority disputes
+    PROCEDURAL_CONFLICT = auto()  # Process disagreements
+    TEMPORAL_CONFLICT = auto()  # Timing conflicts
+    CEREMONIAL_INSTRUMENTAL = auto()  # Ceremonial vs instrumental conflict
+
+
+class DigraphAnalysisType(Enum):
+    """Types of digraph analysis methods."""
+    
+    DEPENDENCY_ANALYSIS = auto()
+    PATH_ANALYSIS = auto()
+    CENTRALITY_ANALYSIS = auto()
+    FLOW_ANALYSIS = auto()
+    LOOP_DETECTION = auto()
+    REACHABILITY_ANALYSIS = auto()
+    STRUCTURAL_ANALYSIS = auto()
+    INFLUENCE_ANALYSIS = auto()
+
+
+class NetworkMetricType(Enum):
+    """Types of network metrics for digraph analysis."""
+    
+    BETWEENNESS_CENTRALITY = auto()
+    CLOSENESS_CENTRALITY = auto()
+    EIGENVECTOR_CENTRALITY = auto()
+    PAGE_RANK = auto()
+    CLUSTERING_COEFFICIENT = auto()
+    DEGREE_CENTRALITY = auto()
+    AUTHORITY_SCORE = auto()
+    HUB_SCORE = auto()
+
+
+class SequenceStage(Enum):
+    """Stages in temporal sequences."""
+    
+    INITIATION = auto()
+    DEVELOPMENT = auto()
+    IMPLEMENTATION = auto()
+    MONITORING = auto()
+    EVALUATION = auto()
+    ADJUSTMENT = auto()
+    COMPLETION = auto()
+    CONTINUATION = auto()
+
+
+class IndicatorType(Enum):
+    """Types of social indicators."""
+    
+    PERFORMANCE_INDICATOR = auto()
+    OUTCOME_INDICATOR = auto()
+    IMPACT_INDICATOR = auto()
+    PROCESS_INDICATOR = auto()
+    STRUCTURAL_INDICATOR = auto()
+    CONTEXTUAL_INDICATOR = auto()
+    COMPOSITE_INDICATOR = auto()
+    DASHBOARD_INDICATOR = auto()
+
+
+class DeontologicalCategory(Enum):
+    """Deontic logic categories based on Polanyi and Commons."""
+    
+    PERMISSION = auto()    # What is allowed
+    OBLIGATION = auto()    # What is required
+    PROHIBITION = auto()   # What is forbidden
+    PRIVILEGE = auto()     # Special permissions
+    DUTY = auto()          # Specific obligations
+    LIABILITY = auto()     # Potential negative obligations
+    RIGHT = auto()         # Protected permissions
+    IMMUNITY = auto()      # Protection from obligations
+
+
+class StatisticalMethod(Enum):
+    """Statistical methods for SFM analysis."""
+    
+    DESCRIPTIVE_STATISTICS = auto()
+    CORRELATION_ANALYSIS = auto()
+    REGRESSION_ANALYSIS = auto()
+    TIME_SERIES_ANALYSIS = auto()
+    FACTOR_ANALYSIS = auto()
+    CLUSTER_ANALYSIS = auto()
+    NETWORK_ANALYSIS = auto()
+    PANEL_DATA_ANALYSIS = auto()
+
+
+class AdjustmentType(Enum):
+    """Types of institutional adjustments."""
+    
+    ADAPTIVE_ADJUSTMENT = auto()
+    CORRECTIVE_ADJUSTMENT = auto()
+    STRUCTURAL_ADJUSTMENT = auto()
+    FUNCTIONAL_ADJUSTMENT = auto()
+    PROCEDURAL_ADJUSTMENT = auto()
+    NORMATIVE_ADJUSTMENT = auto()
+    TECHNOLOGICAL_ADJUSTMENT = auto()
+    ORGANIZATIONAL_ADJUSTMENT = auto()
+
+
+class SystemBoundaryType(Enum):
+    """Types of system boundaries in WSO."""
+    
+    PHYSICAL_BOUNDARY = auto()      # Geographic or physical limits
+    INSTITUTIONAL_BOUNDARY = auto() # Organizational limits
+    FUNCTIONAL_BOUNDARY = auto()    # Activity-based limits
+    TEMPORAL_BOUNDARY = auto()      # Time-based limits
+    CONCEPTUAL_BOUNDARY = auto()    # Analytical limits
+    PERMEABLE_BOUNDARY = auto()     # Boundary allows some crossing
+    RIGID_BOUNDARY = auto()         # Strict boundary enforcement
+
+
+class DeliveryQuantificationMethod(Enum):
+    """Methods for quantifying institutional deliveries."""
+    
+    VOLUME_BASED = auto()          # Quantity of deliveries
+    QUALITY_WEIGHTED = auto()      # Quality-adjusted volume
+    VALUE_BASED = auto()           # Monetary or value measurement
+    IMPACT_BASED = auto()          # Measured by outcomes/impact
+    BENEFICIARY_COUNT = auto()     # Number of recipients
+    TIME_BASED = auto()            # Delivery frequency/timing
+    COMPOSITE_INDEX = auto()       # Multiple measures combined
+
+
+class AdjustmentTrigger(Enum):
+    """What triggers institutional adjustments."""
+    
+    PERFORMANCE_DECLINE = auto()    # Poor performance metrics
+    EXTERNAL_PRESSURE = auto()      # External forces for change
+    INTERNAL_INITIATIVE = auto()    # Internal drive for improvement
+    REGULATORY_CHANGE = auto()      # Legal/regulatory requirements
+    TECHNOLOGICAL_CHANGE = auto()   # Technology-driven adaptation
+    RESOURCE_CONSTRAINT = auto()    # Resource limitations
+    STAKEHOLDER_DEMAND = auto()     # Stakeholder pressure
+    CRISIS_RESPONSE = auto()        # Response to crisis/emergency
+
+
+class MatrixOperationType(Enum):
+    """Types of matrix operations."""
+    
+    CELL_AGGREGATION = auto()      # Combining cell values
+    MATRIX_MULTIPLICATION = auto()  # Mathematical matrix operations
+    CORRELATION_ANALYSIS = auto()   # Finding correlations
+    SENSITIVITY_ANALYSIS = auto()   # Parameter sensitivity
+    OPTIMIZATION = auto()          # Finding optimal configurations
+    COMPARISON = auto()            # Comparing different matrices
+    TRANSFORMATION = auto()        # Converting matrix formats
+    VALIDATION = auto()            # Checking matrix consistency
+
+
+class SystemLevel(Enum):
+    """Levels of system analysis."""
+    
+    INDIVIDUAL = auto()            # Individual actors
+    ORGANIZATIONAL = auto()        # Single organizations
+    SECTORAL = auto()             # Industry/sector level
+    LOCAL = auto()                # Local community level
+    REGIONAL = auto()             # Regional level
+    NATIONAL = auto()             # National level
+    INTERNATIONAL = auto()        # Cross-national level
+    GLOBAL = auto()               # Global system level
+
+
+# ───────────────────────────────────────────────
+# ADDITIONAL ENUMS FOR NEW SFM FRAMEWORK COMPONENTS
+# ───────────────────────────────────────────────
+
+class PolicyType(Enum):
+    """Types of policy interventions."""
+    
+    REGULATORY = auto()          # Rules and regulations
+    INCENTIVE_BASED = auto()     # Economic incentives and disincentives
+    CAPACITY_BUILDING = auto()   # Building institutional capacity
+    COORDINATION = auto()        # Improving coordination mechanisms
+    STRUCTURAL_REFORM = auto()   # Changing institutional structures
+    INFORMATION_PROVISION = auto() # Providing information and transparency
+
+
+class PolicyScope(Enum):
+    """Scope of policy interventions."""
+    
+    INSTITUTION_SPECIFIC = auto()  # Specific to one institution
+    SECTOR_WIDE = auto()          # Entire sector or domain
+    SYSTEM_WIDE = auto()          # Entire system
+    CROSS_SYSTEM = auto()         # Multiple systems
+
+
+class ImplementationComplexity(Enum):
+    """Complexity levels for policy implementation."""
+    
+    LOW = auto()      # Simple implementation
+    MEDIUM = auto()   # Moderate complexity
+    HIGH = auto()     # High complexity
+
+
+class PolicyEffectiveness(Enum):
+    """Levels of policy effectiveness."""
+    
+    HIGHLY_EFFECTIVE = auto()
+    MODERATELY_EFFECTIVE = auto()
+    SOMEWHAT_EFFECTIVE = auto()
+    INEFFECTIVE = auto()
+
+
+class EvaluationMethod(Enum):
+    """Methods for policy evaluation."""
+    
+    COST_BENEFIT_ANALYSIS = auto()
+    MULTI_CRITERIA_ANALYSIS = auto()
+    STAKEHOLDER_ASSESSMENT = auto()
+    IMPACT_EVALUATION = auto()
+    COMPARATIVE_ANALYSIS = auto()
+
+
+class TechnologyMaturityLevel(Enum):
+    """Technology maturity levels."""
+    
+    EMERGING = auto()     # Early development stage
+    DEVELOPING = auto()   # Under development
+    MATURE = auto()       # Fully developed and tested
+    ESTABLISHED = auto()  # Widely adopted
+    DECLINING = auto()    # Being phased out
+
+
+class SkillLevel(Enum):
+    """Skill proficiency levels."""
+    
+    BASIC = auto()        # Basic proficiency
+    INTERMEDIATE = auto() # Intermediate proficiency
+    ADVANCED = auto()     # Advanced proficiency
+    EXPERT = auto()       # Expert level
+
+
+class KnowledgeType(Enum):
+    """Types of knowledge in instrumentalist inquiry."""
+    
+    EMPIRICAL_KNOWLEDGE = auto()    # Based on observation and experience
+    THEORETICAL_KNOWLEDGE = auto()  # Based on theory and logic
+    PRACTICAL_KNOWLEDGE = auto()    # Based on practice and application
+    TACIT_KNOWLEDGE = auto()        # Implicit, hard to articulate
+    EXPLICIT_KNOWLEDGE = auto()     # Clearly articulated and documented
+
+
+class ValidationMethod(Enum):
+    """Methods for validating knowledge claims."""
+    
+    PEER_REVIEW = auto()           # Expert peer review
+    EMPIRICAL_TESTING = auto()     # Testing with data and evidence
+    PRACTICAL_APPLICATION = auto() # Testing through practical use
+    STAKEHOLDER_VALIDATION = auto() # Validation by stakeholders
+    LOGICAL_ANALYSIS = auto()      # Logical consistency checking
+
+
+class AnalyticalMethod(Enum):
+    """Analytical methods used in SFM framework."""
+    
+    MATRIX_ANALYSIS = auto()         # Social Fabric Matrix analysis
+    NETWORK_ANALYSIS = auto()        # Network and graph analysis
+    SYSTEMS_ANALYSIS = auto()        # Systems thinking approaches
+    INSTITUTIONAL_ANALYSIS = auto()  # Institutional economics analysis
+    STAKEHOLDER_ANALYSIS = auto()    # Stakeholder mapping and analysis
+    VALUE_ANALYSIS = auto()          # Value identification and analysis
+    SCENARIO_ANALYSIS = auto()       # Scenario planning and analysis
+
+
+class MatrixConstructionStage(Enum):
+    """Stages in matrix construction process."""
+    
+    INITIALIZATION = auto()         # Initial setup and planning
+    INSTITUTION_MAPPING = auto()    # Identifying institutions
+    CRITERIA_DEVELOPMENT = auto()   # Developing evaluation criteria
+    DATA_POPULATION = auto()        # Populating matrix cells
+    VALIDATION = auto()             # Validating matrix content
+    ANALYSIS = auto()               # Analyzing completed matrix
+    REFINEMENT = auto()             # Refining based on feedback
 
 
 # ───────────────────────────────────────────────
