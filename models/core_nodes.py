@@ -29,12 +29,31 @@ class Actor(Node):
     legal_form: Optional[str] = None  # e.g. "Corporation", "Household"
     sector: Optional[str] = None  # NAICS or custom taxonomy
 
-    # Additional SFM-relevant fields
+    # Enhanced SFM power analysis fields
     power_resources: Dict[str, float] = field(default_factory=lambda: {})
     decision_making_capacity: Optional[float] = None
     institutional_affiliations: List[uuid.UUID] = field(default_factory=lambda: [])
     cognitive_frameworks: List[uuid.UUID] = field(default_factory=lambda: [])
     behavioral_patterns: List[uuid.UUID] = field(default_factory=lambda: [])
+    
+    # Advanced stakeholder power analysis
+    network_centrality: Optional[float] = None  # Network position centrality (0-1)
+    coalition_memberships: List[uuid.UUID] = field(default_factory=lambda: [])
+    influence_relationships: Dict[uuid.UUID, float] = field(default_factory=lambda: {})  # Actor -> influence level
+    resource_dependencies: Dict[uuid.UUID, str] = field(default_factory=lambda: {})  # Actor -> dependency type
+    bargaining_power: Optional[float] = None  # Relative bargaining strength (0-1)
+    veto_power: List[str] = field(default_factory=lambda: [])  # Areas where actor has veto power
+    agenda_setting_power: Optional[float] = None  # Ability to set agendas (0-1)
+    
+    # Power evolution and dynamics
+    power_trajectory: List[Dict[str, float]] = field(default_factory=lambda: [])  # Historical power changes
+    power_consolidation_strategies: List[str] = field(default_factory=lambda: [])
+    power_distribution_preferences: Dict[str, float] = field(default_factory=lambda: {})
+    
+    # Legitimacy and authority
+    legitimacy_sources: List[str] = field(default_factory=lambda: [])  # Sources of legitimacy
+    authority_scope: List[str] = field(default_factory=lambda: [])  # Areas of recognized authority
+    legitimacy_challenges: List[str] = field(default_factory=lambda: [])  # Threats to legitimacy
     
     def calculate_power_index(self) -> float:
         """Calculate overall power index based on power resources."""

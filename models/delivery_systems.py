@@ -68,6 +68,62 @@ class FlowDirection(Enum):
 
 
 @dataclass
+class DeliveryQuality(Node):
+    """Comprehensive quality assessment for institutional deliveries."""
+    
+    delivery_id: Optional[uuid.UUID] = None
+    
+    # Quality dimensions
+    reliability: Optional[float] = None      # Consistency of delivery (0-1)
+    timeliness: Optional[float] = None       # On-time performance (0-1)
+    completeness: Optional[float] = None     # Delivery completeness (0-1)
+    accuracy: Optional[float] = None         # Accuracy/correctness (0-1)
+    responsiveness: Optional[float] = None   # Response to needs (0-1)
+    accessibility: Optional[float] = None    # Ease of access (0-1)
+    
+    # Service quality aspects
+    courtesy: Optional[float] = None         # Professional interaction (0-1)
+    communication: Optional[float] = None    # Communication quality (0-1)
+    competence: Optional[float] = None       # Technical competence (0-1)
+    empathy: Optional[float] = None          # Understanding needs (0-1)
+    
+    # Quality measurement
+    quality_standards: List[str] = field(default_factory=list)
+    quality_indicators: Dict[str, float] = field(default_factory=dict)
+    measurement_methods: List[str] = field(default_factory=list)
+    assessment_frequency: Optional[str] = None
+    
+    # Stakeholder satisfaction
+    recipient_satisfaction: Optional[float] = None  # 0-1 scale
+    stakeholder_ratings: Dict[uuid.UUID, float] = field(default_factory=dict)
+    complaint_rate: Optional[float] = None  # Complaints per delivery
+    resolution_rate: Optional[float] = None  # Issue resolution rate
+    
+    # Performance tracking
+    quality_trends: List[Dict[str, float]] = field(default_factory=list)
+    improvement_initiatives: List[str] = field(default_factory=list)
+    quality_costs: Dict[str, float] = field(default_factory=dict)
+    
+    # SFM integration
+    matrix_quality_impact: Optional[float] = None
+    ceremonial_quality_barriers: List[str] = field(default_factory=list)
+    instrumental_quality_drivers: List[str] = field(default_factory=list)
+    
+    def calculate_overall_quality(self) -> Optional[float]:
+        """Calculate overall quality score."""
+        quality_scores = [
+            self.reliability, self.timeliness, self.completeness,
+            self.accuracy, self.responsiveness, self.accessibility
+        ]
+        valid_scores = [score for score in quality_scores if score is not None]
+        
+        if not valid_scores:
+            return None
+        
+        return statistics.mean(valid_scores)
+
+
+@dataclass
 class DeliveryQuantification(Node):
     """Quantification methods and metrics for institutional deliveries."""
     
@@ -84,6 +140,12 @@ class DeliveryQuantification(Node):
     monetary_value: Optional[float] = None       # Monetary value if applicable
     social_value: Optional[float] = None         # Social value assessment
     environmental_value: Optional[float] = None  # Environmental value
+    
+    # Enhanced quality integration
+    quality_assessment: Optional[uuid.UUID] = None  # Link to DeliveryQuality
+    quality_score: Optional[float] = None       # Overall quality score (0-1)
+    service_level_agreement: Dict[str, float] = field(default_factory=dict)
+    performance_standards: Dict[str, float] = field(default_factory=dict)
     
     # Measurement context
     measurement_context: Dict[str, Any] = field(default_factory=dict)

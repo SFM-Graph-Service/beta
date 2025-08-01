@@ -25,6 +25,7 @@ import statistics
 import math
 
 from models.base_nodes import Node
+from models.specialized_nodes import MatrixCell
 from models.meta_entities import TimeSlice, SpatialUnit
 from models.delivery_systems import DeliveryQuantification, DeliveryFlow
 from models.sfm_enums import (
@@ -78,132 +79,9 @@ class ValidationStatus(Enum):
     FULLY_VALIDATED = auto()     # All validation completed
 
 
-@dataclass
-class MatrixCell(Node):
-    """Individual cell in the Social Fabric Matrix representing relationships."""
     
-    row_element_id: uuid.UUID  # Institution, criteria, or other element ID
-    column_element_id: uuid.UUID  # Institution, criteria, or other element ID
-    matrix_dimension: MatrixDimension = MatrixDimension.INSTITUTION_CRITERIA
-    
-    # Cell value and characteristics
-    delivery_value: Optional[float] = None        # Quantified delivery value (0-1 scale)
-    delivery_quality: Optional[float] = None      # Quality of delivery (0-1 scale)
-    delivery_direction: DeliveryDirection = DeliveryDirection.UNIDIRECTIONAL
-    delivery_intensity: Optional[float] = None    # Intensity/importance of relationship
-    
-    # Quantification details
-    quantification_method: Optional[DeliveryQuantificationMethod] = None
-    measurement_unit: Optional[str] = None
-    raw_measurement_value: Optional[float] = None
-    normalization_factor: Optional[float] = None
-    
-    # Evidence base
-    evidence_sources: Dict[CellEvidence, List[str]] = field(default_factory=lambda: {})
-    evidence_quality: Dict[CellEvidence, float] = field(default_factory=lambda: {})
-    confidence_level: Optional[float] = None      # Confidence in cell value (0-1)
-    uncertainty_range: Optional[Tuple[float, float]] = None
-    
-    # Temporal aspects
-    temporal_stability: Optional[float] = None    # How stable over time (0-1)
-    temporal_trend: Optional[str] = None          # "increasing", "decreasing", "stable"
-    measurement_date: Optional[datetime] = None
-    historical_values: List[Tuple[datetime, float]] = field(default_factory=lambda: [])
-    
-    # Validation
-    validation_status: ValidationStatus = ValidationStatus.NOT_VALIDATED
-    validator_ids: List[uuid.UUID] = field(default_factory=lambda: [])
-    validation_notes: List[str] = field(default_factory=lambda: [])
-    
-    # Dependencies and interactions
-    dependent_cells: List[uuid.UUID] = field(default_factory=lambda: [])  # Cells that depend on this one
-    influencing_cells: List[uuid.UUID] = field(default_factory=lambda: [])  # Cells that influence this one
-    
-    def calculate_cell_reliability(self) -> float:
-        """Calculate overall reliability of this matrix cell."""
-        reliability_factors = []
-        
-        # Evidence diversity
-        if self.evidence_sources:
-            evidence_diversity = len(self.evidence_sources) / len(CellEvidence)
-            reliability_factors.append(evidence_diversity * 0.3)
-        
-        # Evidence quality
-        if self.evidence_quality:
-            avg_evidence_quality = sum(self.evidence_quality.values()) / len(self.evidence_quality)
-            reliability_factors.append(avg_evidence_quality * 0.3)
-        
-        # Confidence level
-        if self.confidence_level is not None:
-            reliability_factors.append(self.confidence_level * 0.2)
-        
-        # Validation status
-        validation_weights = {
-            ValidationStatus.NOT_VALIDATED: 0.0,
-            ValidationStatus.PRELIMINARY: 0.2,
-            ValidationStatus.PEER_REVIEWED: 0.5,
-            ValidationStatus.STAKEHOLDER_VALIDATED: 0.7,
-            ValidationStatus.EMPIRICALLY_TESTED: 0.8,
-            ValidationStatus.FULLY_VALIDATED: 1.0
-        }
-        validation_score = validation_weights[self.validation_status]
-        reliability_factors.append(validation_score * 0.2)
-        
-        return sum(reliability_factors) if reliability_factors else 0.0
-    
-    def assess_measurement_quality(self) -> Dict[str, float]:
-        """Assess quality of measurement for this cell."""
-        quality_metrics = {}
-        
-        # Precision (based on uncertainty range)
-        if self.uncertainty_range:
-            range_size = abs(self.uncertainty_range[1] - self.uncertainty_range[0])
-            precision = max(0.0, 1.0 - range_size)
-            quality_metrics['precision'] = precision
-        
-        # Temporal stability
-        if self.temporal_stability is not None:
-            quality_metrics['stability'] = self.temporal_stability
-        
-        # Evidence base strength
-        if self.evidence_sources:
-            evidence_strength = min(len(self.evidence_sources) / 3.0, 1.0)  # Max 3 evidence types
-            quality_metrics['evidence_strength'] = evidence_strength
-        
-        # Quantification appropriateness
-        if self.quantification_method is not None and self.delivery_value is not None:
-            # Simple check - in practice would be more sophisticated
-            quality_metrics['quantification_appropriateness'] = 0.8
-        
-        # Overall quality
-        if quality_metrics:
-            quality_metrics['overall_quality'] = sum(quality_metrics.values()) / len(quality_metrics)
-        
-        return quality_metrics
-    
-    def update_cell_value(self, new_value: float, evidence_type: CellEvidence, 
-                         evidence_description: str, confidence: float) -> None:
-        """Update cell value with new evidence."""
-        # Store historical value
-        if self.delivery_value is not None and self.measurement_date:
-            self.historical_values.append((self.measurement_date, self.delivery_value))
-        
-        # Update value
-        self.delivery_value = new_value
-        self.measurement_date = datetime.now()
-        self.confidence_level = confidence
-        
-        # Add evidence
-        if evidence_type not in self.evidence_sources:
-            self.evidence_sources[evidence_type] = []
-        self.evidence_sources[evidence_type].append(evidence_description)
-        self.evidence_quality[evidence_type] = confidence
-        
-        # Reset validation status
-        self.validation_status = ValidationStatus.NOT_VALIDATED
 
 
-@dataclass
 class DeliveryMatrix(Node):
     """Specialized matrix for modeling delivery relationships between institutions."""
     
@@ -235,14 +113,14 @@ class DeliveryMatrix(Node):
         # Matrix density
         total_possible_cells = len(self.row_institutions) * len(self.column_institutions)
         non_zero_cells = sum(1 for cell in self.matrix_cells.values() 
-                           if cell.delivery_value is not None and cell.delivery_value > 0)
+                           if cell.delivery_capacity is not None and cell.delivery_capacity > 0)
         if total_possible_cells > 0:
             metrics['matrix_density'] = non_zero_cells / total_possible_cells
             self.matrix_density = metrics['matrix_density']
         
         # Average delivery strength
-        delivery_values = [cell.delivery_value for cell in self.matrix_cells.values() 
-                          if cell.delivery_value is not None]
+        delivery_values = [cell.delivery_capacity for cell in self.matrix_cells.values() 
+                          if cell.delivery_capacity is not None]
         if delivery_values:
             metrics['average_delivery_strength'] = sum(delivery_values) / len(delivery_values)
             self.average_delivery_strength = metrics['average_delivery_strength']
@@ -268,9 +146,8 @@ class DeliveryMatrix(Node):
             reverse_key = (col_id, row_id)
             if reverse_key in self.matrix_cells:
                 total_pairs += 1
-                cell_value = cell.delivery_value or 0
-                reverse_value = self.matrix_cells[reverse_key].delivery_value or 0
-                
+                cell_value = cell.delivery_capacity or 0
+                reverse_value = self.matrix_cells[reverse_key].delivery_capacity or 0
                 # Calculate symmetry for this pair
                 if cell_value + reverse_value > 0:
                     symmetry = 1 - abs(cell_value - reverse_value) / (cell_value + reverse_value)
@@ -287,8 +164,8 @@ class DeliveryMatrix(Node):
         flows = []
         
         for (row_id, col_id), cell in self.matrix_cells.items():
-            if cell.delivery_value is not None and cell.delivery_value >= threshold:
-                flows.append((row_id, col_id, cell.delivery_value))
+            if cell.delivery_capacity is not None and cell.delivery_capacity >= threshold:
+                flows.append((row_id, col_id, cell.delivery_capacity))
         
         # Sort by delivery value (descending)
         flows.sort(key=lambda x: x[2], reverse=True)
@@ -310,7 +187,7 @@ class DeliveryMatrix(Node):
         in_degrees = {inst_id: 0 for inst_id in self.column_institutions}
         
         for (row_id, col_id), cell in self.matrix_cells.items():
-            if cell.delivery_value is not None and cell.delivery_value > 0:
+            if cell.delivery_capacity is not None and cell.delivery_capacity > 0:
                 out_degrees[row_id] += 1
                 in_degrees[col_id] += 1
         
@@ -336,15 +213,15 @@ class DeliveryMatrix(Node):
         for (row_id, col_id), cell in self.matrix_cells.items():
             reverse_key = (col_id, row_id)
             if (reverse_key in self.matrix_cells and 
-                cell.delivery_value is not None and cell.delivery_value > 0 and
-                self.matrix_cells[reverse_key].delivery_value is not None and 
-                self.matrix_cells[reverse_key].delivery_value > 0):
+                cell.delivery_capacity is not None and cell.delivery_capacity > 0 and
+                self.matrix_cells[reverse_key].delivery_capacity is not None and 
+                self.matrix_cells[reverse_key].delivery_capacity > 0):
                 patterns['reciprocal_pairs'].append((row_id, col_id))
         
         return patterns
 
 
-@dataclass
+@dataclass(kw_only=True)
 class MatrixValidation(Node):
     """Validation and quality assurance processes for SFM matrices."""
     
@@ -393,8 +270,8 @@ class MatrixValidation(Node):
         for cell_key, cell in matrix.matrix_cells.items():
             incompleteness_issues = []
             
-            if cell.delivery_value is None:
-                incompleteness_issues.append('Missing delivery value')
+            if cell.delivery_capacity is None:
+                incompleteness_issues.append('Missing delivery capacity')
             
             if not cell.evidence_sources:
                 incompleteness_issues.append('No evidence sources')
@@ -437,22 +314,22 @@ class MatrixValidation(Node):
         for cell_key, cell in matrix.matrix_cells.items():
             total_checks += 1
             
-            # Value range checks
-            if cell.delivery_value is not None:
-                if cell.delivery_value < 0 or cell.delivery_value > 1:
+            # Capacity range checks
+            if cell.delivery_capacity is not None:
+                if cell.delivery_capacity < 0 or cell.delivery_capacity > 1:
                     consistency_results['value_range_issues'].append({
                         'cell_key': cell_key,
-                        'value': cell.delivery_value,
-                        'issue': 'Value outside 0-1 range'
+                        'value': cell.delivery_capacity,
+                        'issue': 'Capacity outside 0-1 range'
                     })
                     consistency_issues += 1
             
-            # Quality vs value consistency
-            if (cell.delivery_value is not None and cell.delivery_quality is not None and
-                cell.delivery_value > 0 and cell.delivery_quality == 0):
+            # Quality vs capacity consistency
+            if (cell.delivery_capacity is not None and cell.delivery_quality is not None and
+                cell.delivery_capacity > 0 and cell.delivery_quality == 0):
                 consistency_results['logical_inconsistencies'].append({
                     'cell_key': cell_key,
-                    'issue': 'Non-zero delivery with zero quality'
+                    'issue': 'Non-zero capacity with zero quality'
                 })
                 consistency_issues += 1
             
@@ -504,13 +381,12 @@ class MatrixValidation(Node):
         return stakeholder_results
 
 
-@dataclass
+@dataclass(kw_only=True)
 class SFMMatrixBuilder(Node):
     """Systematic matrix construction methodology following Hayden's approach."""
-    
-    construction_stage: MatrixConstructionStage = MatrixConstructionStage.INITIALIZATION
     problem_definition_id: uuid.UUID
     system_boundary_id: uuid.UUID
+    construction_stage: MatrixConstructionStage = MatrixConstructionStage.INITIALIZATION
     
     # Matrix construction components
     identified_institutions: List[uuid.UUID] = field(default_factory=lambda: [])
@@ -598,7 +474,7 @@ class SFMMatrixBuilder(Node):
                 # Populate cell data from sources
                 cell_data = self._extract_cell_data(institution_id, criteria_id, data_sources)
                 if cell_data:
-                    cell.delivery_value = cell_data.get('value')
+                    cell.delivery_capacity = cell_data.get('value')
                     cell.delivery_quality = cell_data.get('quality')
                     cell.confidence_level = cell_data.get('confidence', 0.5)
                     cell.evidence_sources = cell_data.get('evidence_sources', {})
@@ -861,8 +737,8 @@ class MatrixAnalyzer(Node):
         provision_total = 0.0
         provision_count = 0
         for (row_id, col_id), cell in matrix.matrix_cells.items():
-            if row_id == institution_id and cell.delivery_value is not None:
-                provision_total += cell.delivery_value
+            if row_id == institution_id and cell.delivery_capacity is not None:
+                provision_total += cell.delivery_capacity
                 provision_count += 1
         
         if provision_count > 0:
@@ -872,8 +748,8 @@ class MatrixAnalyzer(Node):
         reception_total = 0.0
         reception_count = 0
         for (row_id, col_id), cell in matrix.matrix_cells.items():
-            if col_id == institution_id and cell.delivery_value is not None:
-                reception_total += cell.delivery_value
+            if col_id == institution_id and cell.delivery_capacity is not None:
+                reception_total += cell.delivery_capacity
                 reception_count += 1
         
         if reception_count > 0:

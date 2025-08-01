@@ -1,34 +1,3 @@
-"""
-Specialized nodes for SFM modeling.
-
-This module defines specialized nodes for belief systems, technology systems,
-indicators, feedback loops, and other specialized SFM entities based on
-F. Gregory Hayden's Social Fabric Matrix framework.
-
-## Key SFM Components Implemented:
-
-- **MatrixCell**: Core SFM component representing institution-criteria relationships
-- **SFMCriteria**: Evaluation criteria for institutional analysis
-- **ToolSkillTechnologyComplex**: Hayden's integrated technology system concept
-- **CeremonialInstrumentalClassification**: Central SFM behavioral distinction
-- **DigraphAnalysis**: Institutional dependency analysis
-- **ValueJudgment**: Explicit value judgments in policy analysis
-- **SFM-specific attributes**: For ceremonial/instrumental analysis
-"""
-
-from __future__ import annotations
-
-import uuid
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any, Tuple
-from datetime import datetime
-
-from models.base_nodes import Node
-from models.metadata_models import TemporalDynamics, ValidationRule
-from models.sfm_enums import (
-    FeedbackPolarity,
-    FeedbackType,
-    TechnologyReadinessLevel,
     ValueCategory,
     SystemPropertyType,
     PolicyInstrumentType,
@@ -41,122 +10,7 @@ from models.sfm_enums import (
     ValueJudgmentType,
     ToolSkillTechnologyType,
     ProblemSolvingStage,
-    InstitutionalScope,
-    GovernanceMechanism,
-    CrossImpactType,
-    EnforcementType,
-    DecisionMakingType,
-    TransactionCostType,
-    CoordinationMechanismType,
-    CoordinationScope,
-    CommonsGovernanceType,
-    SocialValueDimension,
-    SystemArchetype,
-    PathDependencyType,
-    # New enums for missing components
-    ValueSystemType,
-    SocialFabricIndicatorType,
-    SocialCostType,
-    InstitutionalLevel,
-    NormativeFramework,
-    EvolutionaryStage,
-    DependencyStrength,
-    CriteriaPriority,
-    CorrelationScale,
-    BoundaryType,
-    ProvisioningStage,
-    ConflictType,
 )
-
-
-@dataclass
-class BeliefSystem(Node):
-    """Cultural myths, ideology or worldview that guides decision-making."""
-
-    strength: Optional[float] = None  # Cultural embeddedness (0-1)
-    domain: Optional[str] = None  # Area of society where belief operates
-    # SFM-specific additions:
-    ceremonial_function: bool = True  # Most beliefs are ceremonial in SFM
-    supporting_institutions: List[uuid.UUID] = field(default_factory=lambda: [])
-    conflicting_beliefs: List[uuid.UUID] = field(default_factory=lambda: [])
-    change_resistance: Optional[float] = None  # 0-1 scale
-    legitimacy_provider: bool = False  # Does it provide institutional legitimacy?
-    problem_solving_hindrance: Optional[float] = None  # How much it blocks adaptation
-
-
-@dataclass
-class FeedbackLoop(Node):
-    """Represents a feedback loop in the Social Fabric Matrix."""
-
-    relationships: List[uuid.UUID] = field(default_factory=lambda: [])
-    description: Optional[str] = None
-    polarity: Optional[FeedbackPolarity] = None  # "reinforcing" or "balancing"
-    strength: Optional[float] = None  # Measure of loop strength/impact
-    type: Optional[FeedbackType] = None  # e.g. "positive", "negative", "neutral"
-    # SFM-specific additions:
-    ceremonial_reinforcement: Optional[bool] = None  # Does it reinforce status quo?
-    institutional_impact: List[uuid.UUID] = field(default_factory=lambda: [])  # Affected institutions
-    matrix_cell_effects: List[uuid.UUID] = field(default_factory=lambda: [])  # Affected matrix cells
-    time_delay: Optional[float] = None  # Lag time in feedback (in appropriate time units)
-    system_level_effect: Optional[SystemPropertyType] = None
-
-
-@dataclass
-class TechnologySystem(Node):
-    """Coherent system of techniques, tools and knowledge."""
-
-    maturity: Optional[TechnologyReadinessLevel] = None  # Technology readiness level
-    compatibility: Dict[str, float] = field(default_factory=lambda: {})  # Fit with other systems
-    # SFM-specific additions:
-    institutional_requirements: List[uuid.UUID] = field(default_factory=lambda: [])  # Required institutions
-    skill_requirements: List[str] = field(default_factory=lambda: [])  # Required skills
-    resource_requirements: List[uuid.UUID] = field(default_factory=lambda: [])  # Required resources
-    ceremonial_aspects: Optional[float] = None  # How much is ceremonial vs functional (0-1)
-    problem_solving_capacity: Optional[float] = None  # Effectiveness for problem solving (0-1)
-    adaptation_barriers: List[str] = field(default_factory=lambda: [])  # Barriers to adoption
-
-
-@dataclass
-class Indicator(Node):
-    """Measurable proxy for system performance."""
-
-    value_category: Optional[ValueCategory] = (
-        None  # Non-default field moved to the beginning
-    )
-    measurement_unit: Optional[str] = None  # Non-default field moved to the beginning
-    current_value: Optional[float] = None
-    target_value: Optional[float] = None
-    threshold_values: Dict[str, float] = field(default_factory=lambda: {})
-    temporal_dynamics: Optional[TemporalDynamics] = None  # Track changes over time
-
-    def __post_init__(self) -> None:
-        """Validate indicator configuration after initialization."""
-        # Validate value category context if measurement unit suggests measurement type
-        if self.value_category and self.measurement_unit:
-            # Infer measurement context from measurement unit
-            measurement_context = "quantitative"  # Default assumption
-            if any(qual_indicator in self.measurement_unit.lower() for qual_indicator in
-                   ['scale', 'rating', 'level', 'score', 'index']):
-                measurement_context = "qualitative"
-
-            EnumValidator.validate_value_category_context(
-                self.value_category, measurement_context
-            )
-
-
-@dataclass
-class AnalyticalContext(Node):  # pylint: disable=too-many-instance-attributes
-    """Contains metadata about analysis parameters and configuration."""
-
-    methods_used: List[str] = field(default_factory=lambda: [])
-    assumptions: Dict[str, str] = field(default_factory=lambda: {})
-    data_sources: Dict[str, str] = field(default_factory=lambda: {})
-    validation_approach: Optional[str] = None
-    created_at: datetime = field(default_factory=datetime.now)
-    modified_at: Optional[datetime] = None
-    parameters: Dict[str, Any] = field(default_factory=lambda: {})
-    validation_rules: List[ValidationRule] = field(default_factory=lambda: [])
-
 
 @dataclass
 class SystemProperty(Node):
@@ -2450,8 +2304,8 @@ class CulturalAttitude(Node):
 class DeliveryRelationship(Node):
     """Models how system components make deliveries to each other - core to Hayden's SFM."""
     
-    source_component_id: uuid.UUID
-    target_component_id: uuid.UUID
+    source_component_id: Optional[uuid.UUID] = None
+    target_component_id: Optional[uuid.UUID] = None
     delivery_type: Optional[str] = None  # "service", "resource", "information", "value", etc.
     delivery_content: Optional[str] = None  # What is being delivered
     delivery_mechanism: Optional[str] = None  # How delivery is made

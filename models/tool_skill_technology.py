@@ -734,6 +734,23 @@ class ToolSkillTechnologyComplex(Node):
     effectiveness_indicators: List[str] = field(default_factory=lambda: [])
     optimization_opportunities: List[Dict[str, Any]] = field(default_factory=lambda: [])
     
+    # SFM Matrix Integration (Enhanced)
+    matrix_cells_affected: List[uuid.UUID] = field(default_factory=lambda: [])  # Matrix cells affected by TST
+    delivery_system_requirements: Dict[uuid.UUID, str] = field(default_factory=lambda: {})  # Delivery requirements
+    institutional_tst_relationships: List[uuid.UUID] = field(default_factory=lambda: [])  # Institution relationships
+    
+    # Ceremonial-Instrumental Analysis Integration
+    ceremonial_technology_barriers: List[str] = field(default_factory=lambda: [])  # Ceremonial barriers
+    instrumental_technology_enablers: List[str] = field(default_factory=lambda: [])  # Instrumental drivers
+    ceremonial_instrumental_balance: Optional[float] = None  # CI balance (-1 to +1)
+    technology_transformation_potential: Optional[float] = None  # Transformation potential (0-1)
+    
+    # Matrix Integration Properties
+    tst_matrix_integration: Optional[float] = None  # Integration with matrix (0-1)
+    matrix_delivery_dependencies: Dict[uuid.UUID, float] = field(default_factory=lambda: {})  # Delivery dependencies
+    cross_matrix_tst_effects: List[str] = field(default_factory=lambda: [])  # Cross-matrix effects
+    matrix_tst_feedback_loops: List[uuid.UUID] = field(default_factory=lambda: [])  # Feedback loops
+    
     def assess_complex_integration(self) -> Dict[str, float]:
         """Assess integration level within the TST complex."""
         integration_assessment = {}
@@ -876,3 +893,163 @@ class ToolSkillTechnologyComplex(Node):
         ]
         
         return optimization_plan
+    
+    def assess_ceremonial_instrumental_characteristics(self) -> Dict[str, float]:
+        """Assess ceremonial vs. instrumental characteristics of the TST complex."""
+        ci_assessment = {}
+        
+        # Ceremonial characteristics analysis
+        ceremonial_score = 0.0
+        ceremonial_factors = []
+        
+        # Barrier-based ceremonial assessment
+        if self.ceremonial_technology_barriers:
+            barrier_score = min(len(self.ceremonial_technology_barriers) / 5.0, 1.0)
+            ceremonial_factors.append(barrier_score * 0.4)
+        
+        # Resistance to change (based on adaptation capacity)
+        if self.adaptation_capacity is not None:
+            resistance_score = 1.0 - self.adaptation_capacity
+            ceremonial_factors.append(resistance_score * 0.3)
+        
+        # Innovation resistance (based on innovation potential)
+        if self.innovation_potential is not None:
+            innovation_resistance = 1.0 - self.innovation_potential
+            ceremonial_factors.append(innovation_resistance * 0.3)
+        
+        if ceremonial_factors:
+            ceremonial_score = sum(ceremonial_factors)
+        
+        ci_assessment['ceremonial_score'] = min(ceremonial_score, 1.0)
+        
+        # Instrumental characteristics analysis
+        instrumental_score = 0.0
+        instrumental_factors = []
+        
+        # Problem-solving orientation (based on primary functions)
+        problem_solving_functions = [f for f in self.primary_functions 
+                                   if any(keyword in f.lower() for keyword in 
+                                        ['solve', 'optimize', 'improve', 'enhance'])]
+        if self.primary_functions:
+            problem_solving_ratio = len(problem_solving_functions) / len(self.primary_functions)
+            instrumental_factors.append(problem_solving_ratio * 0.3)
+        
+        # Efficiency focus (based on performance objectives)
+        efficiency_objectives = {k: v for k, v in self.performance_objectives.items() 
+                               if 'efficiency' in k.lower() or 'optimization' in k.lower()}
+        if self.performance_objectives:
+            efficiency_ratio = len(efficiency_objectives) / len(self.performance_objectives)
+            instrumental_factors.append(efficiency_ratio * 0.2)
+        
+        # Innovation capacity
+        if self.innovation_potential is not None:
+            instrumental_factors.append(self.innovation_potential * 0.3)
+        
+        # Adaptation capacity
+        if self.adaptation_capacity is not None:
+            instrumental_factors.append(self.adaptation_capacity * 0.2)
+        
+        if instrumental_factors:
+            instrumental_score = sum(instrumental_factors)
+        
+        ci_assessment['instrumental_score'] = min(instrumental_score, 1.0)
+        
+        # Calculate balance
+        if ceremonial_score + instrumental_score > 0:
+            balance = (instrumental_score - ceremonial_score) / (ceremonial_score + instrumental_score)
+            ci_assessment['ceremonial_instrumental_balance'] = balance
+            self.ceremonial_instrumental_balance = balance
+        
+        # Transformation potential
+        if instrumental_score > ceremonial_score:
+            transformation_potential = instrumental_score - ceremonial_score
+            ci_assessment['transformation_potential'] = transformation_potential
+            self.technology_transformation_potential = transformation_potential
+        
+        return ci_assessment
+    
+    def assess_matrix_integration_level(self) -> Dict[str, float]:
+        """Assess integration level with SFM matrix."""
+        matrix_integration = {}
+        
+        # Matrix cell integration
+        if self.matrix_cells_affected:
+            cell_integration_score = min(len(self.matrix_cells_affected) / 10.0, 1.0)
+            matrix_integration['cell_integration'] = cell_integration_score
+        
+        # Delivery system integration
+        if self.delivery_system_requirements:
+            delivery_integration_score = min(len(self.delivery_system_requirements) / 5.0, 1.0)
+            matrix_integration['delivery_integration'] = delivery_integration_score
+        
+        # Institutional relationship integration
+        if self.institutional_tst_relationships:
+            institutional_integration_score = min(len(self.institutional_tst_relationships) / 8.0, 1.0)
+            matrix_integration['institutional_integration'] = institutional_integration_score
+        
+        # Feedback loop integration
+        if self.matrix_tst_feedback_loops:
+            feedback_integration_score = min(len(self.matrix_tst_feedback_loops) / 3.0, 1.0)
+            matrix_integration['feedback_integration'] = feedback_integration_score
+        
+        # Overall matrix integration
+        if matrix_integration:
+            overall_integration = sum(matrix_integration.values()) / len(matrix_integration)
+            matrix_integration['overall_matrix_integration'] = overall_integration
+            self.tst_matrix_integration = overall_integration
+        
+        return matrix_integration
+    
+    def identify_matrix_optimization_opportunities(self) -> List[Dict[str, Any]]:
+        """Identify opportunities for better matrix integration."""
+        opportunities = []
+        
+        matrix_integration = self.assess_matrix_integration_level()
+        ci_assessment = self.assess_ceremonial_instrumental_characteristics()
+        
+        # Low matrix integration opportunities
+        if matrix_integration.get('overall_matrix_integration', 0) < 0.5:
+            opportunities.append({
+                'type': 'matrix_integration_enhancement',
+                'description': 'Improve integration with SFM matrix cells and delivery systems',
+                'priority': 'high',
+                'estimated_impact': 0.6
+            })
+        
+        # Ceremonial barrier reduction opportunities
+        if ci_assessment.get('ceremonial_score', 0) > 0.6:
+            opportunities.append({
+                'type': 'ceremonial_barrier_reduction',
+                'description': 'Address ceremonial barriers to technology adoption and change',
+                'priority': 'high',
+                'estimated_impact': 0.5
+            })
+        
+        # Instrumental enhancement opportunities
+        if ci_assessment.get('instrumental_score', 0) < 0.7:
+            opportunities.append({
+                'type': 'instrumental_enhancement',
+                'description': 'Strengthen instrumental problem-solving and efficiency focus',
+                'priority': 'medium',
+                'estimated_impact': 0.4
+            })
+        
+        # Delivery system optimization
+        if matrix_integration.get('delivery_integration', 0) < 0.6:
+            opportunities.append({
+                'type': 'delivery_system_optimization',
+                'description': 'Optimize TST complex integration with delivery systems',
+                'priority': 'medium',
+                'estimated_impact': 0.3
+            })
+        
+        # Feedback loop enhancement
+        if matrix_integration.get('feedback_integration', 0) < 0.4:
+            opportunities.append({
+                'type': 'feedback_loop_enhancement',
+                'description': 'Develop stronger feedback loops with matrix components',
+                'priority': 'low',
+                'estimated_impact': 0.2
+            })
+        
+        return opportunities
