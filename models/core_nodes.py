@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 
 from models.base_nodes import Node
 from models.meta_entities import TimeSlice, SpatialUnit, Scenario

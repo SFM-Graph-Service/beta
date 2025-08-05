@@ -7,10 +7,7 @@ tools for evaluating the ceremonial versus instrumental characteristics of
 institutions, behaviors, technologies, and policies within SFM analysis.
 """
 
-# type: ignore
-# mypy: disable-error-code=misc,type-arg,attr-defined,assignment,operator,call-overload,return-value,arg-type,union-attr,var-annotated,name-defined,no-any-return,override
-# pylint: disable=too-many-instance-attributes,too-many-public-methods,unnecessary-isinstance,arguments-differ
-# pyright: reportGeneralTypeIssues=false, reportUnknownParameterType=false, reportUnknownVariableType=false, reportUnknownMemberType=false
+# pylint: disable=too-many-instance-attributes,too-many-public-methods  # Complex SFM dataclasses require many attributes
 
 from __future__ import annotations
 
@@ -92,20 +89,20 @@ class CeremonialInstrumentalAnalysis(Node):
     # Ceremonial characteristics
     ceremonial_indicators: Dict[DichotomyIndicator, float] = field(default_factory=dict)  # type: ignore[misc]
     ceremonial_behaviors: List[CeremonialType] = field(default_factory=list)  # type: ignore[misc]
-    ceremonial_manifestations: List[str] = field(default_factory=list)  # type: ignore[misc]
-    ceremonial_functions: List[str] = field(default_factory=list)  # What ceremonial aspects do  # type: ignore[misc]
+    ceremonial_manifestations: List[str] = field(default_factory=list)
+    ceremonial_functions: List[str] = field(default_factory=list)  # What ceremonial aspects do
     
     # Instrumental characteristics
     instrumental_indicators: Dict[DichotomyIndicator, float] = field(default_factory=dict)  # type: ignore[misc]
     instrumental_behaviors: List[InstrumentalType] = field(default_factory=list)  # type: ignore[misc]
-    instrumental_manifestations: List[str] = field(default_factory=list)  # type: ignore[misc]
-    instrumental_functions: List[str] = field(default_factory=list)  # What instrumental aspects do  # type: ignore[misc]
+    instrumental_manifestations: List[str] = field(default_factory=list)
+    instrumental_functions: List[str] = field(default_factory=list)  # What instrumental aspects do
     
     # Dichotomy dynamics
-    tension_areas: List[str] = field(default_factory=list)  # Areas of C-I tension  # type: ignore[misc]
-    conflict_points: List[str] = field(default_factory=list)  # Points of active conflict  # type: ignore[misc]
-    transformation_pressures: List[str] = field(default_factory=list)  # Pressures for change  # type: ignore[misc]
-    resistance_mechanisms: List[str] = field(default_factory=list)  # Mechanisms resisting change  # type: ignore[misc]
+    tension_areas: List[str] = field(default_factory=list)  # Areas of C-I tension
+    conflict_points: List[str] = field(default_factory=list)  # Points of active conflict
+    transformation_pressures: List[str] = field(default_factory=list)  # Pressures for change
+    resistance_mechanisms: List[str] = field(default_factory=list)  # Mechanisms resisting change
     
     # Change analysis
     transformation_stage: Optional[TransformationStage] = None
@@ -166,7 +163,7 @@ class CeremonialInstrumentalAnalysis(Node):
             factors.append(self.change_velocity * 0.2)
         
         if factors:
-            potential = sum(factors) / len(factors) * 4  # Weight factors appropriately  # type: ignore[arg-type]
+            potential = sum(factors) / len(factors) * 4  # Weight factors appropriately
             self.transformation_potential = min(potential, 1.0)
             return self.transformation_potential
         
