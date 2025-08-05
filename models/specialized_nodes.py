@@ -1,10 +1,29 @@
+"""
+Specialized SFM nodes for advanced analysis and system properties.
+
+This module contains specialized node types that support advanced SFM analysis
+including system properties, policy instruments, and measurement tools.
+"""
+
+from __future__ import annotations
+
+import uuid
+from dataclasses import dataclass, field
+from datetime import datetime
+from typing import Dict, List, Optional, Any
+
+from models.base_nodes import Node
+from models.sfm_enums import (
     ValueCategory,
     SystemPropertyType,
     PolicyInstrumentType,
     EnumValidator,
     CorrelationType,
+    CorrelationScale,
+    CrossImpactType,
     EvidenceQuality,
     CriteriaType,
+    CriteriaPriority,
     MeasurementApproach,
     CeremonialInstrumentalType,
     ValueJudgmentType,

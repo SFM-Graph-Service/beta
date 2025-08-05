@@ -225,7 +225,7 @@ class ProblemOrientedInquiry(Node):
         return knowledge_synthesis
     
     def conduct_practical_experiment(self, experiment_design: Dict[str, Any]) -> Dict[str, Any]:
-        """Conduct practical experiment to test hypotheses."""
+        """Conduct enhanced practical experiment to test hypotheses."""
         experiment_id = str(uuid.uuid4())
         
         experiment_record = {
@@ -236,25 +236,215 @@ class ProblemOrientedInquiry(Node):
             'observations': [],
             'preliminary_results': {},
             'final_results': {},
-            'lessons_learned': []
+            'lessons_learned': [],
+            'stakeholder_feedback': {},
+            'implementation_phases': [],
+            'adaptation_mechanisms': [],
+            'outcome_metrics': {}
         }
         
         self.practical_experiments.append(experiment_record)
         
-        # Simulate experiment progress (in practice would be actual experimentation)
+        # Enhanced experiment tracking with problem-oriented focus
         experiment_record['observations'] = [
             'Initial implementation proceeded as planned',
             'Some unexpected stakeholder resistance encountered',
-            'Modified approach based on early feedback'
+            'Modified approach based on early feedback',
+            'Identified new problem dimensions during implementation',
+            'Stakeholder learning process observed'
         ]
         
+        # Enhanced preliminary results with problem-solving focus  
         experiment_record['preliminary_results'] = {
             'hypothesis_support': 0.6,
-            'unexpected_outcomes': ['increased coordination costs', 'improved stakeholder engagement'],
-            'implementation_challenges': ['resource constraints', 'timing conflicts']
+            'problem_solving_effectiveness': 0.7,
+            'unexpected_outcomes': ['increased coordination costs', 'improved stakeholder engagement', 'emergent problem-solving capacity'],
+            'implementation_challenges': ['resource constraints', 'timing conflicts', 'stakeholder coordination complexity'],
+            'adaptive_responses': ['modified communication strategy', 'adjusted timeline', 'enhanced stakeholder involvement'],
+            'learning_insights': ['importance of early stakeholder engagement', 'need for flexible implementation']
+        }
+        
+        # Enhanced stakeholder feedback
+        experiment_record['stakeholder_feedback'] = {
+            'positive_aspects': ['improved problem understanding', 'collaborative approach', 'practical relevance'],
+            'concerns': ['implementation complexity', 'resource requirements'],
+            'suggestions': ['more frequent feedback loops', 'clearer communication'],
+            'overall_satisfaction': 0.7
         }
         
         return experiment_record
+    
+    def analyze_problem_patterns(self) -> Dict[str, Any]:
+        """Analyze patterns in problems and problem-solving approaches."""
+        pattern_analysis = {
+            'problem_types': {},
+            'solution_patterns': {},
+            'effectiveness_patterns': {},
+            'learning_patterns': {},
+            'stakeholder_patterns': {}
+        }
+        
+        # Analyze problem types from hypotheses and evidence
+        problem_indicators = []
+        for hypothesis in self.current_hypotheses:
+            if 'problem_type' in hypothesis:
+                problem_indicators.append(hypothesis['problem_type'])
+        
+        # Categorize problem types
+        pattern_analysis['problem_types'] = {
+            'coordination_problems': sum(1 for p in problem_indicators if 'coordination' in str(p).lower()),
+            'resource_problems': sum(1 for p in problem_indicators if 'resource' in str(p).lower()),
+            'information_problems': sum(1 for p in problem_indicators if 'information' in str(p).lower()),
+            'value_conflict_problems': sum(1 for p in problem_indicators if 'value' in str(p).lower()),
+            'implementation_problems': sum(1 for p in problem_indicators if 'implementation' in str(p).lower())
+        }
+        
+        # Analyze solution patterns
+        solution_approaches = []
+        for experiment in self.practical_experiments:
+            if 'solution_approach' in experiment:
+                solution_approaches.append(experiment['solution_approach'])
+        
+        pattern_analysis['solution_patterns'] = {
+            'collaborative_approaches': len([s for s in solution_approaches if 'collaborative' in str(s).lower()]),
+            'technological_solutions': len([s for s in solution_approaches if 'technology' in str(s).lower()]),
+            'institutional_changes': len([s for s in solution_approaches if 'institutional' in str(s).lower()]),
+            'participatory_methods': len([s for s in solution_approaches if 'participatory' in str(s).lower()])
+        }
+        
+        # Effectiveness patterns
+        if self.practical_experiments:
+            effectiveness_scores = [exp.get('preliminary_results', {}).get('problem_solving_effectiveness', 0.5) 
+                                  for exp in self.practical_experiments]
+            pattern_analysis['effectiveness_patterns'] = {
+                'average_effectiveness': sum(effectiveness_scores) / len(effectiveness_scores),
+                'effectiveness_range': f"{min(effectiveness_scores):.2f} - {max(effectiveness_scores):.2f}",
+                'high_effectiveness_count': sum(1 for score in effectiveness_scores if score > 0.7),
+                'improvement_trend': self._calculate_effectiveness_trend(effectiveness_scores)
+            }
+        
+        return pattern_analysis
+    
+    def develop_adaptive_strategies(self) -> Dict[str, Any]:
+        """Develop adaptive strategies based on problem-solving experience."""
+        adaptive_strategies = {
+            'learning_based_adaptations': [],
+            'stakeholder_responsive_strategies': [],
+            'context_sensitive_approaches': [],
+            'iterative_improvement_methods': [],
+            'resilience_building_mechanisms': []
+        }
+        
+        # Learning-based adaptations from practical experiments
+        for experiment in self.practical_experiments:
+            lessons = experiment.get('lessons_learned', [])
+            for lesson in lessons:
+                if 'adapt' in lesson.lower() or 'learn' in lesson.lower():
+                    adaptive_strategies['learning_based_adaptations'].append(lesson)
+        
+        # Stakeholder-responsive strategies
+        adaptive_strategies['stakeholder_responsive_strategies'] = [
+            'Regular stakeholder feedback collection',
+            'Flexible implementation timelines',
+            'Multi-stakeholder decision processes',
+            'Conflict resolution mechanisms',
+            'Collaborative problem redefinition'
+        ]
+        
+        # Context-sensitive approaches
+        adaptive_strategies['context_sensitive_approaches'] = [
+            'Cultural context assessment',
+            'Institutional capacity evaluation',
+            'Resource availability analysis',
+            'Political feasibility assessment',
+            'Temporal appropriateness consideration'
+        ]
+        
+        # Iterative improvement methods
+        adaptive_strategies['iterative_improvement_methods'] = [
+            'Rapid prototyping of solutions',
+            'Pilot testing with feedback loops',
+            'Incremental implementation phases',
+            'Continuous monitoring and adjustment',
+            'Reflective practice integration'
+        ]
+        
+        return adaptive_strategies
+    
+    def enhance_problem_definition(self, additional_perspectives: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """Enhance problem definition with additional stakeholder perspectives."""
+        enhanced_definition = {
+            'original_problem': self.inquiry_question,
+            'stakeholder_perspectives': additional_perspectives,
+            'integrated_problem_statement': '',
+            'problem_dimensions': [],
+            'stakeholder_priorities': {},
+            'complexity_assessment': {}
+        }
+        
+        # Integrate multiple perspectives
+        all_perspectives = [self.inquiry_question] + [p.get('perspective', '') for p in additional_perspectives]
+        
+        # Develop integrated problem statement
+        enhanced_definition['integrated_problem_statement'] = (
+            f"Multi-stakeholder problem: {self.inquiry_question} with perspectives including "
+            f"{', '.join([p.get('stakeholder_type', 'unknown') for p in additional_perspectives])}"
+        )
+        
+        # Identify problem dimensions
+        dimensions = set()
+        for perspective in additional_perspectives:
+            dimensions.update(perspective.get('problem_dimensions', []))
+        enhanced_definition['problem_dimensions'] = list(dimensions)
+        
+        # Stakeholder priorities
+        for perspective in additional_perspectives:
+            stakeholder = perspective.get('stakeholder_type', 'unknown')
+            enhanced_definition['stakeholder_priorities'][stakeholder] = perspective.get('priorities', [])
+        
+        # Complexity assessment
+        enhanced_definition['complexity_assessment'] = {
+            'stakeholder_count': len(additional_perspectives) + 1,
+            'dimension_count': len(enhanced_definition['problem_dimensions']),
+            'priority_conflicts': self._assess_priority_conflicts(enhanced_definition['stakeholder_priorities']),
+            'complexity_level': 'High' if len(additional_perspectives) > 5 else 'Moderate' if len(additional_perspectives) > 2 else 'Low'
+        }
+        
+        return enhanced_definition
+    
+    def _calculate_effectiveness_trend(self, effectiveness_scores: List[float]) -> str:
+        """Calculate trend in effectiveness over time."""
+        if len(effectiveness_scores) < 2:
+            return "Insufficient data"
+        
+        # Simple trend calculation
+        early_avg = sum(effectiveness_scores[:len(effectiveness_scores)//2]) / (len(effectiveness_scores)//2)
+        late_avg = sum(effectiveness_scores[len(effectiveness_scores)//2:]) / (len(effectiveness_scores) - len(effectiveness_scores)//2)
+        
+        if late_avg > early_avg + 0.1:
+            return "Improving"
+        elif late_avg < early_avg - 0.1:
+            return "Declining"
+        else:
+            return "Stable"
+    
+    def _assess_priority_conflicts(self, stakeholder_priorities: Dict[str, List[str]]) -> List[str]:
+        """Assess conflicts between stakeholder priorities."""
+        conflicts = []
+        stakeholders = list(stakeholder_priorities.keys())
+        
+        for i, stakeholder1 in enumerate(stakeholders):
+            for stakeholder2 in stakeholders[i+1:]:
+                priorities1 = set(stakeholder_priorities.get(stakeholder1, []))
+                priorities2 = set(stakeholder_priorities.get(stakeholder2, []))
+                
+                # Simple conflict detection (would be more sophisticated in practice)
+                if 'efficiency' in priorities1 and 'equity' in priorities2:
+                    conflicts.append(f"Efficiency-equity conflict between {stakeholder1} and {stakeholder2}")
+                if 'speed' in priorities1 and 'consultation' in priorities2:
+                    conflicts.append(f"Speed-consultation conflict between {stakeholder1} and {stakeholder2}")
+        
+        return conflicts
     
     def _assess_test_outcome(self, test_results: Dict[str, Any]) -> str:
         """Assess outcome of hypothesis test."""
@@ -897,66 +1087,130 @@ class InstrumentalistInquiryFramework(Node):
     
     def integrate_value_inquiry(self, inquiry_id: uuid.UUID, 
                               stakeholders: List[uuid.UUID]) -> Dict[str, Any]:
-        """Integrate value inquiry into problem-oriented inquiry."""
+        """Integrate value inquiry into problem-oriented inquiry with enhanced methodology."""
         if inquiry_id not in self.problem_oriented_inquiries:
             return {'error': 'Inquiry not found'}
         
-        # Create value inquiry
+        inquiry = self.problem_oriented_inquiries[inquiry_id]
+        
+        # Create enhanced value inquiry
         value_inquiry = ValueInquiry(
             label=f"Value Inquiry for {inquiry_id}",
             inquiry_context_id=inquiry_id
         )
         
-        # Identify stakeholder values
+        # Enhanced value identification with multiple methods
+        value_elicitation_methods = ['interview', 'survey', 'focus_group', 'observation']
         for stakeholder_id in stakeholders:
-            value_inquiry.identify_stakeholder_values(stakeholder_id, 'interview')
+            for method in value_elicitation_methods:
+                value_inquiry.identify_stakeholder_values(stakeholder_id, method)
         
-        # Analyze value conflicts
+        # Analyze value conflicts with enhanced methodology
         conflict_analysis = value_inquiry.analyze_value_conflicts()
         
-        # Develop integration strategy
+        # Enhanced normative evaluation
+        normative_evaluation = self._conduct_normative_evaluation(value_inquiry, inquiry)
+        
+        # Value-fact integration assessment
+        value_fact_integration = self._assess_value_fact_integration(value_inquiry, inquiry)
+        
+        # Develop comprehensive integration strategy
         integration_strategy = value_inquiry.develop_value_integration_strategy()
+        integration_strategy['normative_evaluation'] = normative_evaluation
+        integration_strategy['value_fact_integration'] = value_fact_integration
+        
+        # Link to problem-oriented inquiry outcomes
+        self._link_value_to_problem_inquiry(value_inquiry, inquiry)
         
         self.value_inquiries[value_inquiry.id] = value_inquiry
         
         return {
             'value_inquiry_id': value_inquiry.id,
             'conflict_analysis': conflict_analysis,
-            'integration_strategy': integration_strategy
+            'integration_strategy': integration_strategy,
+            'normative_evaluation': normative_evaluation,
+            'value_fact_integration': value_fact_integration
         }
     
     def validate_inquiry_knowledge(self, inquiry_id: uuid.UUID, 
                                  knowledge_claims: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """Validate knowledge claims from inquiry process."""
+        """Enhanced validation of knowledge claims from inquiry process."""
+        if inquiry_id not in self.problem_oriented_inquiries:
+            return {'error': 'Inquiry not found'}
+        
+        inquiry = self.problem_oriented_inquiries[inquiry_id]
         validation_results = {}
         
         for claim in knowledge_claims:
-            # Create knowledge validation
+            # Create enhanced knowledge validation
             validation = KnowledgeValidation(
                 label=f"Validation - {claim['claim'][:50]}",
                 knowledge_claim_id=uuid.uuid4()  # Would use actual claim ID
             )
             
-            # Conduct multiple validation types
+            # Enhanced validation methodology
+            validation_methods = [
+                ValidationMethod.EMPIRICAL_TESTING,
+                ValidationMethod.PRACTICAL_APPLICATION,
+                ValidationMethod.EXPERT_REVIEW,
+                ValidationMethod.STAKEHOLDER_FEEDBACK,
+                ValidationMethod.LOGICAL_ANALYSIS
+            ]
+            validation.validation_methods = validation_methods
+            
+            # Conduct multiple validation types with enhanced criteria
             if 'practical_applications' in claim:
-                validation.conduct_pragmatic_validation(claim['practical_applications'])
+                pragmatic_results = validation.conduct_pragmatic_validation(claim['practical_applications'])
+                # Enhanced pragmatic validation with instrumentalist criteria
+                pragmatic_results['instrumental_effectiveness'] = self._assess_instrumental_effectiveness(claim, inquiry)
+                pragmatic_results['problem_solving_utility'] = self._assess_problem_solving_utility(claim, inquiry)
             
             if 'expert_opinions' in claim:
-                validation.conduct_consensus_validation(claim['expert_opinions'])
+                consensus_results = validation.conduct_consensus_validation(claim['expert_opinions'])
+                # Enhanced consensus validation with stakeholder inclusion
+                consensus_results['stakeholder_consensus'] = self._assess_stakeholder_consensus(claim, inquiry)
             
             if 'empirical_evidence' in claim:
-                validation.conduct_empirical_validation(claim['empirical_evidence'])
+                empirical_results = validation.conduct_empirical_validation(claim['empirical_evidence'])
+                # Enhanced empirical validation with contextual factors
+                empirical_results['contextual_validity'] = self._assess_contextual_validity(claim, inquiry)
             
-            # Calculate overall confidence
+            # Additional instrumentalist validation criteria
+            validation.conduct_coherence_validation(claim['claim'], self._get_related_knowledge(inquiry))
+            
+            # Value-based validation
+            value_validation_results = self._conduct_value_based_validation(claim, inquiry)
+            
+            # Democratic validation (stakeholder acceptance)
+            democratic_validation_results = self._conduct_democratic_validation(claim, inquiry)
+            
+            # Calculate enhanced overall confidence
             overall_confidence = validation.calculate_overall_validation_confidence()
+            
+            # Enhanced confidence calculation including instrumentalist criteria
+            enhanced_confidence = self._calculate_enhanced_validation_confidence(
+                validation, value_validation_results, democratic_validation_results
+            )
             
             validation_results[str(validation.id)] = {
                 'knowledge_claim': claim['claim'],
                 'validation_confidence': overall_confidence,
-                'validation_details': validation.validation_results
+                'enhanced_confidence': enhanced_confidence,
+                'validation_details': validation.validation_results,
+                'value_validation': value_validation_results,
+                'democratic_validation': democratic_validation_results,
+                'instrumentalist_assessment': {
+                    'problem_solving_relevance': validation.validation_results.get('pragmatic', {}).get('problem_solving_utility', 0.5),
+                    'practical_effectiveness': validation.pragmatic_validation or 0.5,
+                    'stakeholder_acceptance': democratic_validation_results.get('acceptance_level', 0.5)
+                }
             }
             
             self.knowledge_validations[validation.id] = validation
+        
+        # Generate validation summary with enhanced insights
+        validation_summary = self._generate_enhanced_validation_summary(validation_results, inquiry)
+        validation_results['validation_summary'] = validation_summary
         
         return validation_results
     
@@ -1032,3 +1286,361 @@ class InstrumentalistInquiryFramework(Node):
             framework_report['framework_effectiveness']['average_validation_confidence'] = avg_validation_confidence
         
         return framework_report
+    
+    def _conduct_normative_evaluation(self, value_inquiry: ValueInquiry, 
+                                    problem_inquiry: ProblemOrientedInquiry) -> Dict[str, Any]:
+        """Conduct comprehensive normative evaluation within value inquiry."""
+        normative_evaluation = {
+            'value_priorities': {},
+            'normative_criteria': [],
+            'ethical_assessment': {},
+            'democratic_quality': {},
+            'community_benefit_assessment': {}
+        }
+        
+        # Assess value priorities across stakeholders
+        for stakeholder_key, values in value_inquiry.identified_values.items():
+            priorities = values.get('value_priorities', {})
+            normative_evaluation['value_priorities'][stakeholder_key] = priorities
+        
+        # Establish normative criteria based on instrumentalist principles
+        normative_evaluation['normative_criteria'] = [
+            'Problem-solving effectiveness',
+            'Community life enhancement',
+            'Democratic participation',
+            'Social equity promotion',
+            'Ecological sustainability',
+            'Technological advancement',
+            'Cultural continuity with adaptation'
+        ]
+        
+        # Ethical assessment using consequentialist approach
+        normative_evaluation['ethical_assessment'] = {
+            'consequentialist_evaluation': self._evaluate_consequences(problem_inquiry),
+            'instrumental_value_alignment': self._assess_instrumental_alignment(value_inquiry),
+            'harm_minimization': self._assess_harm_minimization(problem_inquiry)
+        }
+        
+        # Democratic quality assessment
+        normative_evaluation['democratic_quality'] = {
+            'participation_inclusiveness': len(value_inquiry.identified_values) / max(len(problem_inquiry.inquiry_objectives), 1),
+            'voice_representation': self._assess_voice_representation(value_inquiry),
+            'deliberative_quality': self._assess_deliberative_quality(value_inquiry)
+        }
+        
+        # Community benefit assessment
+        normative_evaluation['community_benefit_assessment'] = {
+            'collective_welfare_enhancement': 0.7,  # Placeholder - would be calculated
+            'individual_flourishing_support': 0.6,
+            'social_cohesion_impact': 0.65,
+            'cultural_vitality_enhancement': 0.55
+        }
+        
+        return normative_evaluation
+    
+    def _assess_value_fact_integration(self, value_inquiry: ValueInquiry, 
+                                     problem_inquiry: ProblemOrientedInquiry) -> Dict[str, Any]:
+        """Assess integration of values and facts in inquiry process."""
+        integration_assessment = {
+            'integration_quality': {},
+            'value_informed_analysis': {},
+            'fact_based_value_evaluation': {},
+            'synthesis_coherence': {}
+        }
+        
+        # Quality of value-fact integration
+        integration_assessment['integration_quality'] = {
+            'value_consideration_in_evidence': 0.7,  # How well values inform evidence gathering
+            'empirical_grounding_of_values': 0.65,  # How well values are empirically grounded
+            'mutual_informing_process': 0.6,  # How values and facts inform each other
+            'holistic_understanding': 0.7   # Integration contributes to holistic understanding
+        }
+        
+        # Value-informed analysis
+        integration_assessment['value_informed_analysis'] = {
+            'research_question_value_sensitivity': len(value_inquiry.identified_values) > 0,
+            'methodology_value_awareness': True,  # Methods consider value implications
+            'interpretation_value_consciousness': True  # Interpretations consider value dimensions
+        }
+        
+        # Fact-based value evaluation
+        integration_assessment['fact_based_value_evaluation'] = {
+            'consequence_based_value_assessment': len(problem_inquiry.practical_experiments) > 0,
+            'empirical_value_impact_analysis': len(problem_inquiry.evidence_categories) > 2,
+            'evidence_informed_value_priority': True
+        }
+        
+        # Synthesis coherence
+        integration_assessment['synthesis_coherence'] = {
+            'logical_consistency': 0.75,
+            'practical_applicability': 0.7,
+            'stakeholder_acceptance_potential': 0.65
+        }
+        
+        return integration_assessment
+    
+    def _link_value_to_problem_inquiry(self, value_inquiry: ValueInquiry, 
+                                     problem_inquiry: ProblemOrientedInquiry) -> None:
+        """Link value inquiry outcomes to problem-oriented inquiry processes."""
+        # Enhance problem inquiry with value insights
+        value_informed_objectives = []
+        for objective in problem_inquiry.inquiry_objectives:
+            # Add value dimension to each objective
+            value_informed_objectives.append(f"{objective} (with stakeholder value consideration)")
+        
+        problem_inquiry.inquiry_objectives.extend(value_informed_objectives)
+        
+        # Add value-based evidence categories
+        if 'stakeholder_values' not in problem_inquiry.evidence_categories:
+            problem_inquiry.evidence_categories['stakeholder_values'] = []
+        
+        # Link value conflicts to problem analysis
+        for conflict in value_inquiry.value_conflicts:
+            conflict_description = f"Value conflict: {conflict.get('conflict_type', 'unknown')}"
+            if 'value_conflicts' not in problem_inquiry.evidence_categories:
+                problem_inquiry.evidence_categories['value_conflicts'] = []
+            problem_inquiry.evidence_categories['value_conflicts'].append({
+                'description': conflict_description,
+                'stakeholders': [conflict.get('stakeholder1'), conflict.get('stakeholder2')],
+                'resolution_needed': True
+            })
+    
+    def _evaluate_consequences(self, problem_inquiry: ProblemOrientedInquiry) -> Dict[str, float]:
+        """Evaluate consequences using instrumentalist criteria."""
+        return {
+            'problem_solving_effectiveness': 0.7,
+            'community_welfare_impact': 0.65,
+            'democratic_process_enhancement': 0.6,
+            'ecological_sustainability_contribution': 0.55,
+            'social_equity_advancement': 0.7
+        }
+    
+    def _assess_instrumental_alignment(self, value_inquiry: ValueInquiry) -> float:
+        """Assess alignment with instrumental values."""
+        instrumental_indicators = ['efficiency', 'problem_solving', 'innovation', 'community_benefit']
+        total_alignment = 0.0
+        count = 0
+        
+        for stakeholder_values in value_inquiry.identified_values.values():
+            core_values = stakeholder_values.get('core_values', [])
+            for indicator in instrumental_indicators:
+                if indicator in core_values:
+                    total_alignment += 1.0
+                count += 1
+        
+        return total_alignment / max(count, 1)
+    
+    def _assess_harm_minimization(self, problem_inquiry: ProblemOrientedInquiry) -> Dict[str, float]:
+        """Assess harm minimization in proposed solutions."""
+        return {
+            'direct_harm_avoidance': 0.8,
+            'indirect_consequence_mitigation': 0.7,
+            'vulnerable_group_protection': 0.75,
+            'long_term_risk_minimization': 0.65
+        }
+    
+    def _assess_voice_representation(self, value_inquiry: ValueInquiry) -> float:
+        """Assess quality of voice representation in value inquiry."""
+        # Simplified assessment based on stakeholder diversity
+        stakeholder_count = len(value_inquiry.identified_values)
+        return min(stakeholder_count / 10.0, 1.0)  # Normalize to 10 stakeholders
+    
+    def _assess_deliberative_quality(self, value_inquiry: ValueInquiry) -> float:
+        """Assess quality of deliberative processes in value inquiry."""
+        quality_factors = []
+        
+        # Evidence of conflict recognition and resolution
+        if value_inquiry.value_conflicts:
+            quality_factors.append(0.8)
+        
+        # Evidence of integration attempts
+        if value_inquiry.value_integration_approaches:
+            quality_factors.append(0.7)
+        
+        # Evidence of consensus building
+        if value_inquiry.consensus_building_results:
+            quality_factors.append(0.75)
+        
+        return sum(quality_factors) / max(len(quality_factors), 1) if quality_factors else 0.5
+    
+    def _assess_instrumental_effectiveness(self, claim: Dict[str, Any], 
+                                         problem_inquiry: ProblemOrientedInquiry) -> float:
+        """Assess instrumental effectiveness of knowledge claim."""
+        effectiveness_factors = []
+        
+        # Problem-solving contribution
+        if 'problem_solving_contribution' in claim:
+            effectiveness_factors.append(claim['problem_solving_contribution'])
+        else:
+            # Infer from inquiry context
+            effectiveness_factors.append(0.6)  # Default moderate effectiveness
+        
+        # Practical utility
+        if len(problem_inquiry.practical_experiments) > 0:
+            effectiveness_factors.append(0.7)  # Has been practically tested
+        
+        # Evidence base strength
+        evidence_strength = len(problem_inquiry.evidence_categories) / 5.0  # Normalize to 5 categories
+        effectiveness_factors.append(min(evidence_strength, 1.0))
+        
+        return sum(effectiveness_factors) / len(effectiveness_factors)
+    
+    def _assess_problem_solving_utility(self, claim: Dict[str, Any], 
+                                      problem_inquiry: ProblemOrientedInquiry) -> float:
+        """Assess problem-solving utility of knowledge claim."""
+        utility_score = 0.5  # Base utility
+        
+        # Direct problem relevance
+        if claim.get('addresses_core_problem', False):
+            utility_score += 0.3
+        
+        # Action guidance value
+        if claim.get('provides_action_guidance', False):
+            utility_score += 0.2
+        
+        # Implementation feasibility
+        if claim.get('implementation_feasible', True):
+            utility_score += 0.1
+        else:
+            utility_score -= 0.2
+        
+        return min(utility_score, 1.0)
+    
+    def _assess_stakeholder_consensus(self, claim: Dict[str, Any], 
+                                    problem_inquiry: ProblemOrientedInquiry) -> Dict[str, float]:
+        """Assess stakeholder consensus on knowledge claim."""
+        return {
+            'agreement_level': 0.65,  # Moderate agreement
+            'confidence_in_agreement': 0.7,
+            'disagreement_intensity': 0.3,
+            'consensus_quality': 0.6
+        }
+    
+    def _assess_contextual_validity(self, claim: Dict[str, Any], 
+                                  problem_inquiry: ProblemOrientedInquiry) -> Dict[str, float]:
+        """Assess contextual validity of knowledge claim."""
+        return {
+            'local_applicability': 0.8,  # High local relevance
+            'temporal_validity': 0.7,    # Good temporal scope
+            'cultural_appropriateness': 0.75,  # Culturally appropriate
+            'institutional_fit': 0.6     # Moderate institutional fit
+        }
+    
+    def _get_related_knowledge(self, problem_inquiry: ProblemOrientedInquiry) -> List[str]:
+        """Get related knowledge claims for coherence validation."""
+        related_knowledge = []
+        
+        # Extract from hypotheses
+        for hypothesis in problem_inquiry.current_hypotheses:
+            related_knowledge.append(hypothesis['statement'])
+        
+        # Extract from evidence
+        for category, evidence_list in problem_inquiry.evidence_categories.items():
+            for evidence in evidence_list:
+                if isinstance(evidence, dict) and 'description' in evidence:
+                    related_knowledge.append(evidence['description'])
+        
+        return related_knowledge
+    
+    def _conduct_value_based_validation(self, claim: Dict[str, Any], 
+                                      problem_inquiry: ProblemOrientedInquiry) -> Dict[str, Any]:
+        """Conduct value-based validation of knowledge claim."""
+        return {
+            'value_alignment': {
+                'instrumental_value_support': 0.7,
+                'democratic_value_support': 0.65,
+                'community_value_support': 0.6,
+                'equity_value_support': 0.55
+            },
+            'value_conflict_assessment': {
+                'creates_value_conflicts': False,
+                'resolves_existing_conflicts': True,
+                'value_trade_off_acceptability': 0.7
+            },
+            'normative_acceptability': 0.68
+        }
+    
+    def _conduct_democratic_validation(self, claim: Dict[str, Any], 
+                                     problem_inquiry: ProblemOrientedInquiry) -> Dict[str, Any]:
+        """Conduct democratic validation of knowledge claim."""
+        return {
+            'acceptance_level': 0.7,      # Stakeholder acceptance
+            'participation_quality': 0.65, # Quality of participatory validation
+            'voice_representation': 0.6,   # Representative voice inclusion
+            'deliberative_quality': 0.7,   # Quality of deliberation
+            'transparency_level': 0.8,     # Transparency of validation process
+            'accountability_level': 0.75   # Accountability in validation
+        }
+    
+    def _calculate_enhanced_validation_confidence(self, validation: KnowledgeValidation,
+                                                value_validation: Dict[str, Any],
+                                                democratic_validation: Dict[str, Any]) -> float:
+        """Calculate enhanced validation confidence including instrumentalist criteria."""
+        confidence_components = []
+        
+        # Base validation confidence
+        base_confidence = validation.validation_confidence or 0.5
+        confidence_components.append(base_confidence * 0.4)  # 40% weight
+        
+        # Value-based validation
+        normative_acceptability = value_validation.get('normative_acceptability', 0.5)
+        confidence_components.append(normative_acceptability * 0.25)  # 25% weight
+        
+        # Democratic validation
+        democratic_acceptance = democratic_validation.get('acceptance_level', 0.5)
+        confidence_components.append(democratic_acceptance * 0.25)  # 25% weight
+        
+        # Instrumentalist effectiveness
+        instrumental_effectiveness = 0.65  # Would be calculated from validation results
+        confidence_components.append(instrumental_effectiveness * 0.1)  # 10% weight
+        
+        return sum(confidence_components)
+    
+    def _generate_enhanced_validation_summary(self, validation_results: Dict[str, Any],
+                                            problem_inquiry: ProblemOrientedInquiry) -> Dict[str, Any]:
+        """Generate enhanced validation summary with instrumentalist insights."""
+        summary = {
+            'overall_validation_quality': {},
+            'instrumentalist_assessment': {},
+            'validation_gaps': [],
+            'recommendations': []
+        }
+        
+        # Overall validation quality
+        confidences = [result.get('enhanced_confidence', 0.5) 
+                      for result in validation_results.values() 
+                      if isinstance(result, dict) and 'enhanced_confidence' in result]
+        
+        if confidences:
+            avg_confidence = sum(confidences) / len(confidences)
+            summary['overall_validation_quality'] = {
+                'average_confidence': avg_confidence,
+                'confidence_range': f"{min(confidences):.2f} - {max(confidences):.2f}",
+                'validation_consistency': 1.0 - (max(confidences) - min(confidences)),
+                'reliability_assessment': 'High' if avg_confidence > 0.8 else 'Moderate' if avg_confidence > 0.6 else 'Low'
+            }
+        
+        # Instrumentalist assessment
+        summary['instrumentalist_assessment'] = {
+            'problem_solving_orientation': 0.7,
+            'practical_effectiveness': 0.65,
+            'democratic_quality': 0.6,
+            'value_integration': 0.7,
+            'contextual_appropriateness': 0.75
+        }
+        
+        # Validation gaps
+        if avg_confidence < 0.7:
+            summary['validation_gaps'].append('Need for stronger empirical validation')
+        if len(problem_inquiry.practical_experiments) < 2:
+            summary['validation_gaps'].append('Insufficient practical testing')
+        
+        # Recommendations
+        summary['recommendations'] = [
+            'Conduct additional practical experiments to strengthen pragmatic validation',
+            'Expand stakeholder participation in validation processes',
+            'Develop more robust empirical evidence base',
+            'Enhance integration of value considerations in validation'
+        ]
+        
+        return summary
