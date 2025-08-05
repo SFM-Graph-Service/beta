@@ -18,12 +18,6 @@ from enum import Enum, auto
 from models.base_nodes import Node
 # Note: CulturalDimension, ValueOrientation, CulturalTransmissionType, and MeaningSystemType
 # are defined locally in this file rather than imported from models.sfm_enums
-from models.sfm_enums import (
-    # CulturalDimension,  # Defined locally
-    # ValueOrientation,  # Defined locally
-    # CulturalTransmissionType,  # Defined locally
-    # MeaningSystemType  # Defined locally
-)
 
 
 class CulturalDimension(Enum):

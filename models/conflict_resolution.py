@@ -18,12 +18,6 @@ from enum import Enum, auto
 from models.base_nodes import Node
 # Note: ConflictType, ConflictIntensity, ResolutionMechanism, and MediationStyle
 # are defined locally in this file rather than imported from models.sfm_enums
-from models.sfm_enums import (
-    # ConflictType,  # Defined locally
-    # ConflictIntensity,  # Defined locally
-    # ResolutionMechanism,  # Defined locally
-    # MediationStyle  # Defined locally
-)
 
 
 class ConflictType(Enum):

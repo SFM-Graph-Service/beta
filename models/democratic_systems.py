@@ -19,7 +19,7 @@ from models.sfm_enums import (
     DecisionMakingType,
     GovernanceMechanism
 )
-# Note: ParticipationLevel and DemocraticProcessType are defined locally below
+# Note: ParticipationLevel, DemocraticProcessType, and StakeholderRole are defined locally in this file rather than imported from models.sfm_enums
 
 
 class ParticipationLevel(Enum):

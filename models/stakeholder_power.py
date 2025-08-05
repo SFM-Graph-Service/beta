@@ -16,14 +16,7 @@ from datetime import datetime
 from enum import Enum, auto
 
 from models.base_nodes import Node
-# Note: PowerType, InfluenceStrategy, and CoalitionType are defined locally in this file
-# PowerRelationType was not found in models.sfm_enums, removing from import
-from models.sfm_enums import (
-    # PowerType,  # Defined locally
-    # InfluenceStrategy,  # Defined locally
-    # CoalitionType,  # Defined locally
-    # PowerRelationType  # Not found in sfm_enums
-)
+# Note: PowerType, InfluenceStrategy, CoalitionType, and PowerDynamic are defined locally in this file rather than imported from models.sfm_enums
 
 
 class PowerType(Enum):

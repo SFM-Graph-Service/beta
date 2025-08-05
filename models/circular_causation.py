@@ -81,8 +81,8 @@ class LoopType(Enum):
 class CausalLink(Node):
     """Individual causal relationship between two system elements."""
     
-    cause_element_id: uuid.UUID  # What causes the effect
-    effect_element_id: uuid.UUID  # What is affected
+    cause_element_id: uuid.UUID = field(default_factory=uuid.uuid4)  # What causes the effect
+    effect_element_id: uuid.UUID = field(default_factory=uuid.uuid4)  # What is affected
     
     # Causal properties
     causal_direction: CausalDirection = CausalDirection.POSITIVE
@@ -103,6 +103,9 @@ class CausalLink(Node):
     evidence_strength: float = 0.5  # Strength of evidence for this link (0-1)
     empirical_support: List[str] = field(default_factory=list)
     theoretical_basis: Optional[str] = None
+    
+    # Quantitative analysis support
+    quantitative_strength: Optional[float] = None  # Quantitative strength measure
     
     # SFM Matrix Integration (Enhanced)
     institutional_mediation: List[uuid.UUID] = field(default_factory=list)  # Institutions that mediate this link
@@ -429,11 +432,8 @@ class CumulativeProcess(Node):
         
         elif self.cumulative_type == CumulativeType.THRESHOLD_EFFECTS:
             self.current_accumulated_value += value
-            # Effects only appear after threshold
-            if self.threshold_value and self.current_accumulated_value < self.threshold_value:
-                effective_value = 0.0  # type: ignore[misc]  # noqa: F841
-            else:
-                effective_value = self.current_accumulated_value  # type: ignore[misc]  # noqa: F841
+            # Effects only appear after threshold is crossed
+            # (actual effective value calculated in get_effective_value() method)
         
         # Apply carrying capacity constraint if specified
         if self.carrying_capacity:
@@ -562,7 +562,6 @@ class CCCAnalyzer(Node):
                     if neighbor in rec_stack:
                         # Found a cycle
                         cycle_start = path.index(neighbor)
-                        cycle_nodes = path[cycle_start:]  # type: ignore[misc]  # noqa: F841
                         cycle_links = link_path[cycle_start:]
                         
                         # Create feedback loop
@@ -764,3 +763,567 @@ class CCCAnalyzer(Node):
             recommendations.append("System appears stable - continue monitoring for emerging patterns")
         
         return recommendations
+
+
+# =============================================================================
+# Priority 3A: Enhanced Circular Causation Analysis
+# =============================================================================
+
+@dataclass
+class QuantitativeFeedbackAnalysis(Node):
+    """Advanced quantitative analysis of feedback loop dynamics."""
+    
+    # Quantitative feedback metrics
+    loop_gain: Dict[uuid.UUID, float] = field(default_factory=dict)  # Loop gain coefficients
+    stability_margins: Dict[uuid.UUID, float] = field(default_factory=dict)  # Stability margins
+    frequency_response: Dict[uuid.UUID, Dict[str, float]] = field(default_factory=dict)  # Frequency domain analysis
+    transfer_functions: Dict[uuid.UUID, Dict[str, float]] = field(default_factory=dict)  # System transfer functions
+    
+    # Time-domain analysis
+    step_response: Dict[uuid.UUID, List[float]] = field(default_factory=dict)  # Step response data
+    impulse_response: Dict[uuid.UUID, List[float]] = field(default_factory=dict)  # Impulse response data
+    time_constants: Dict[uuid.UUID, float] = field(default_factory=dict)  # System time constants
+    
+    # Nonlinear dynamics
+    phase_portraits: Dict[uuid.UUID, List[Tuple[float, float]]] = field(default_factory=dict)  # Phase space analysis
+    bifurcation_points: Dict[uuid.UUID, List[float]] = field(default_factory=dict)  # Critical parameter values
+    attractor_basins: Dict[uuid.UUID, Dict[str, Any]] = field(default_factory=dict)  # Basin of attraction analysis
+    
+    def calculate_loop_gain(self, loop: FeedbackLoop) -> float:
+        """Calculate the loop gain for quantitative feedback analysis."""
+        if not loop.causal_chain or not loop.causal_chain.causal_links:
+            return 0.0
+        
+        # Calculate product of all link strengths in the loop
+        total_gain = 1.0
+        for link_id in loop.causal_chain.causal_links:
+            link = self._get_causal_link(link_id)
+            if link and link.quantitative_strength is not None:
+                # Convert strength to gain based on direction
+                if link.causal_direction == CausalDirection.POSITIVE:
+                    total_gain *= link.quantitative_strength
+                elif link.causal_direction == CausalDirection.NEGATIVE:
+                    total_gain *= -link.quantitative_strength
+                else:
+                    total_gain *= abs(link.quantitative_strength)
+        
+        # Apply polarity correction
+        if loop.loop_polarity == FeedbackPolarity.BALANCING:
+            total_gain *= -1
+        
+        self.loop_gain[loop.id] = total_gain
+        return total_gain
+    
+    def assess_stability_margin(self, loop: FeedbackLoop) -> float:
+        """Assess stability margin using Nyquist/Bode analysis concepts."""
+        loop_gain = self.loop_gain.get(loop.id, 0.0)
+        
+        if loop_gain == 0.0:
+            return 1.0  # Maximally stable
+        
+        # For negative feedback loops, stability margin is 1 - |gain|
+        # For positive feedback loops with gain < 1, system is stable
+        if loop.loop_polarity == FeedbackPolarity.BALANCING:
+            stability_margin = 1.0 - abs(loop_gain)
+        else:  # Positive feedback
+            if abs(loop_gain) < 1.0:
+                stability_margin = 1.0 - abs(loop_gain)
+            else:
+                stability_margin = -abs(loop_gain - 1.0)  # Unstable
+        
+        self.stability_margins[loop.id] = stability_margin
+        return stability_margin
+    
+    def analyze_frequency_response(self, loop: FeedbackLoop, frequency_range: List[float]) -> Dict[str, float]:
+        """Analyze frequency response characteristics of the feedback loop."""
+        loop_gain = self.loop_gain.get(loop.id, 0.0)
+        
+        # Simplified frequency response analysis
+        # In a full implementation, this would use complex analysis
+        frequency_metrics = {
+            'bandwidth': 0.0,
+            'resonant_frequency': 0.0,
+            'phase_margin': 0.0,
+            'gain_margin': 0.0
+        }
+        
+        if loop_gain != 0.0:
+            # Estimate bandwidth based on loop gain and time constants
+            time_constant = self.time_constants.get(loop.id, 1.0)
+            frequency_metrics['bandwidth'] = 1.0 / (2 * math.pi * time_constant)
+            
+            # Phase margin approximation
+            frequency_metrics['phase_margin'] = math.degrees(math.atan(1.0 / abs(loop_gain)))
+            
+            # Gain margin
+            frequency_metrics['gain_margin'] = 20 * math.log10(1.0 / abs(loop_gain)) if abs(loop_gain) > 0 else float('inf')
+        
+        self.frequency_response[loop.id] = frequency_metrics
+        return frequency_metrics
+    
+    def simulate_step_response(self, loop: FeedbackLoop, time_steps: int = 100) -> List[float]:
+        """Simulate step response of the feedback loop."""
+        loop_gain = self.loop_gain.get(loop.id, 0.0)
+        time_constant = self.time_constants.get(loop.id, 1.0)
+        
+        step_response = []
+        dt = 5.0 * time_constant / time_steps  # Simulate for 5 time constants
+        
+        for i in range(time_steps):
+            t = i * dt
+            if loop.loop_polarity == FeedbackPolarity.BALANCING:
+                # First-order negative feedback response
+                response = 1.0 - math.exp(-t / time_constant)
+            else:
+                # Positive feedback response
+                if abs(loop_gain) < 1.0:
+                    response = (1.0 - math.exp(-t / time_constant)) / (1.0 - loop_gain)
+                else:
+                    # Unstable response - exponential growth
+                    response = math.exp(t * (abs(loop_gain) - 1.0) / time_constant)
+            
+            step_response.append(response)
+        
+        self.step_response[loop.id] = step_response
+        return step_response
+    
+    def analyze_nonlinear_dynamics(self, loop: FeedbackLoop, parameter_range: List[float]) -> Dict[str, Any]:
+        """Analyze nonlinear dynamics including bifurcations and attractors."""
+        nonlinear_analysis = {
+            'has_bifurcations': False,
+            'bifurcation_types': [],
+            'attractor_types': [],
+            'chaos_indicators': {}
+        }
+        
+        loop_gain = self.loop_gain.get(loop.id, 0.0)
+        
+        # Look for bifurcation points
+        bifurcation_points = []
+        for param in parameter_range:
+            # Check for critical parameter values
+            effective_gain = loop_gain * param
+            if abs(effective_gain - 1.0) < 0.01:  # Near critical value
+                bifurcation_points.append(param)
+        
+        if bifurcation_points:
+            nonlinear_analysis['has_bifurcations'] = True
+            nonlinear_analysis['bifurcation_types'] = ['transcritical', 'pitchfork']
+            self.bifurcation_points[loop.id] = bifurcation_points
+        
+        # Analyze attractor types
+        if abs(loop_gain) < 1.0:
+            nonlinear_analysis['attractor_types'].append('fixed_point')
+        elif abs(loop_gain) > 1.0:
+            if loop.loop_polarity == FeedbackPolarity.REINFORCING:
+                nonlinear_analysis['attractor_types'].append('unstable_node')
+            else:
+                nonlinear_analysis['attractor_types'].append('limit_cycle')
+        
+        return nonlinear_analysis
+    
+    def conduct_comprehensive_quantitative_analysis(self, loops: List[FeedbackLoop]) -> Dict[str, Any]:
+        """Conduct comprehensive quantitative analysis of all feedback loops."""
+        comprehensive_analysis = {
+            'loop_analysis': {},
+            'system_level_metrics': {},
+            'stability_assessment': {},
+            'dynamics_classification': {}
+        }
+        
+        # Analyze each loop individually
+        for loop in loops:
+            loop_analysis = {
+                'loop_gain': self.calculate_loop_gain(loop),
+                'stability_margin': self.assess_stability_margin(loop),
+                'frequency_response': self.analyze_frequency_response(loop, [0.1, 1.0, 10.0]),
+                'step_response': self.simulate_step_response(loop),
+                'nonlinear_dynamics': self.analyze_nonlinear_dynamics(loop, [0.5, 1.0, 1.5, 2.0])
+            }
+            comprehensive_analysis['loop_analysis'][loop.id] = loop_analysis
+        
+        # System-level metrics
+        all_gains = list(self.loop_gain.values())
+        all_margins = list(self.stability_margins.values())
+        
+        comprehensive_analysis['system_level_metrics'] = {
+            'average_loop_gain': sum(all_gains) / len(all_gains) if all_gains else 0.0,
+            'minimum_stability_margin': min(all_margins) if all_margins else 1.0,
+            'number_unstable_loops': sum(1 for margin in all_margins if margin < 0),
+            'system_complexity_index': len(loops) * (1.0 + sum(abs(g) for g in all_gains))
+        }
+        
+        # Overall stability assessment
+        min_margin = comprehensive_analysis['system_level_metrics']['minimum_stability_margin']
+        if min_margin > 0.5:
+            stability_level = 'high'
+        elif min_margin > 0.0:
+            stability_level = 'moderate'
+        else:
+            stability_level = 'low'
+        
+        comprehensive_analysis['stability_assessment'] = {
+            'overall_stability_level': stability_level,
+            'critical_loops': [loop.id for loop in loops if self.stability_margins.get(loop.id, 1.0) < 0.1],
+            'dominant_loops': [loop.id for loop in loops if abs(self.loop_gain.get(loop.id, 0.0)) > 0.8]
+        }
+        
+        return comprehensive_analysis
+    
+    def _get_causal_link(self, link_id: uuid.UUID) -> Optional[CausalLink]:
+        """Helper method to get causal link by ID."""
+        # This would need to be implemented to access the causal links
+        # In a full implementation, this would interface with the CCCAnalyzer
+        return None
+
+
+@dataclass 
+class TemporalDynamicsAnalysis(Node):
+    """Advanced temporal analysis of causation patterns and longitudinal effects."""
+    
+    # Temporal pattern analysis
+    temporal_sequences: Dict[uuid.UUID, List[Tuple[datetime, float]]] = field(default_factory=dict)
+    lag_structures: Dict[uuid.UUID, Dict[str, float]] = field(default_factory=dict)  # Time lags between cause and effect
+    rhythm_patterns: Dict[uuid.UUID, Dict[str, Any]] = field(default_factory=dict)  # Cyclical patterns
+    trend_analysis: Dict[uuid.UUID, Dict[str, float]] = field(default_factory=dict)  # Long-term trends
+    
+    # Longitudinal causation modeling
+    path_dependency_strength: Dict[uuid.UUID, float] = field(default_factory=dict)
+    critical_junctures: Dict[uuid.UUID, List[datetime]] = field(default_factory=dict)  # Key decision points
+    momentum_indicators: Dict[uuid.UUID, float] = field(default_factory=dict)  # Process momentum
+    reversibility_assessment: Dict[uuid.UUID, Dict[str, Any]] = field(default_factory=dict)
+    
+    # Time-series causation analysis
+    granger_causality_tests: Dict[Tuple[uuid.UUID, uuid.UUID], Dict[str, float]] = field(default_factory=dict)
+    impulse_response_functions: Dict[uuid.UUID, List[float]] = field(default_factory=dict)
+    variance_decomposition: Dict[uuid.UUID, Dict[uuid.UUID, float]] = field(default_factory=dict)
+    
+    def analyze_temporal_lag_structure(self, cause_series: List[Tuple[datetime, float]], 
+                                     effect_series: List[Tuple[datetime, float]]) -> Dict[str, float]:
+        """Analyze the temporal lag structure between cause and effect series."""
+        lag_analysis = {
+            'optimal_lag': 0.0,
+            'correlation_at_optimal_lag': 0.0,
+            'lag_distribution': {},
+            'time_to_peak_effect': 0.0
+        }
+        
+        if len(cause_series) < 2 or len(effect_series) < 2:
+            return lag_analysis
+        
+        # Convert to aligned time series
+        cause_values = [val for _, val in cause_series]
+        effect_values = [val for _, val in effect_series]
+        
+        # Cross-correlation analysis for different lags
+        max_correlation = 0.0
+        optimal_lag = 0.0
+        
+        max_lag = min(len(cause_values), len(effect_values)) // 4  # Check up to 25% of series length
+        
+        for lag in range(max_lag):
+            if lag == 0:
+                correlation = self._calculate_correlation(cause_values, effect_values)
+            else:
+                correlation = self._calculate_correlation(cause_values[:-lag], effect_values[lag:])
+            
+            lag_analysis['lag_distribution'][f'lag_{lag}'] = correlation
+            
+            if abs(correlation) > abs(max_correlation):
+                max_correlation = correlation
+                optimal_lag = lag
+        
+        lag_analysis['optimal_lag'] = optimal_lag
+        lag_analysis['correlation_at_optimal_lag'] = max_correlation
+        
+        # Estimate time to peak effect
+        peak_lag = max(lag_analysis['lag_distribution'].items(), key=lambda x: abs(x[1]))[0]
+        lag_analysis['time_to_peak_effect'] = float(peak_lag.split('_')[1])
+        
+        return lag_analysis
+    
+    def detect_cyclical_patterns(self, time_series: List[Tuple[datetime, float]]) -> Dict[str, Any]:
+        """Detect cyclical patterns in temporal data."""
+        cyclical_analysis = {
+            'has_cycles': False,
+            'cycle_periods': [],
+            'cycle_amplitudes': [],
+            'phase_relationships': {},
+            'seasonality_strength': 0.0
+        }
+        
+        if len(time_series) < 10:
+            return cyclical_analysis
+        
+        values = [val for _, val in time_series]
+        
+        # Simple cycle detection using autocorrelation
+        autocorrelations = []
+        for lag in range(1, len(values) // 3):
+            autocorr = self._calculate_correlation(values[:-lag], values[lag:])
+            autocorrelations.append((lag, autocorr))
+        
+        # Find peaks in autocorrelation (indicating cycles)
+        cycle_candidates = []
+        for i in range(1, len(autocorrelations) - 1):
+            lag, corr = autocorrelations[i]
+            prev_corr = autocorrelations[i-1][1]
+            next_corr = autocorrelations[i+1][1]
+            
+            if corr > prev_corr and corr > next_corr and corr > 0.3:
+                cycle_candidates.append((lag, corr))
+        
+        if cycle_candidates:
+            cyclical_analysis['has_cycles'] = True
+            cyclical_analysis['cycle_periods'] = [lag for lag, _ in cycle_candidates]
+            cyclical_analysis['cycle_amplitudes'] = [corr for _, corr in cycle_candidates]
+            cyclical_analysis['seasonality_strength'] = max(corr for _, corr in cycle_candidates)
+        
+        return cyclical_analysis
+    
+    def analyze_path_dependency(self, causal_sequence: List[Tuple[datetime, uuid.UUID, str]]) -> Dict[str, Any]:
+        """Analyze path dependency strength and critical junctures."""
+        path_analysis = {
+            'dependency_strength': 0.0,
+            'critical_junctures': [],
+            'lock_in_probability': 0.0,
+            'switching_costs': {},
+            'momentum_index': 0.0
+        }
+        
+        if len(causal_sequence) < 3:
+            return path_analysis
+        
+        # Analyze decision point clustering
+        decision_types = [decision_type for _, _, decision_type in causal_sequence]
+        
+        # Calculate momentum (consistency of decision direction)
+        direction_changes = 0
+        for i in range(1, len(decision_types)):
+            if decision_types[i] != decision_types[i-1]:
+                direction_changes += 1
+        
+        momentum_index = 1.0 - (direction_changes / (len(decision_types) - 1))
+        path_analysis['momentum_index'] = momentum_index
+        
+        # Identify critical junctures (periods of high decision frequency)
+        juncture_threshold = timedelta(days=30)  # 30-day window
+        critical_periods = []
+        
+        for i, (time1, _, _) in enumerate(causal_sequence[:-1]):
+            decisions_in_window = 1
+            for j in range(i+1, len(causal_sequence)):
+                time2, _, _ = causal_sequence[j]
+                if time2 - time1 <= juncture_threshold:
+                    decisions_in_window += 1
+                else:
+                    break
+            
+            if decisions_in_window >= 3:  # At least 3 decisions in 30 days
+                critical_periods.append(time1)
+        
+        path_analysis['critical_junctures'] = critical_periods
+        path_analysis['dependency_strength'] = momentum_index * (1.0 + len(critical_periods) * 0.1)
+        
+        return path_analysis
+    
+    def perform_granger_causality_test(self, cause_series: List[Tuple[datetime, float]], 
+                                     effect_series: List[Tuple[datetime, float]]) -> Dict[str, float]:
+        """Perform Granger causality test between two time series."""
+        granger_results = {
+            'f_statistic': 0.0,
+            'p_value': 1.0,
+            'causality_strength': 0.0,
+            'optimal_lags': 1,
+            'direction_confidence': 0.0
+        }
+        
+        if len(cause_series) < 10 or len(effect_series) < 10:
+            return granger_results
+        
+        # Simplified Granger causality implementation
+        # Extract values and align time series
+        cause_values = [val for _, val in cause_series]
+        effect_values = [val for _, val in effect_series]
+        
+        # Test different lag structures
+        best_improvement = 0.0
+        best_lag = 1
+        
+        for lag in range(1, min(5, len(cause_values) // 4)):
+            # Calculate prediction improvement with lagged cause variables
+            improvement = self._calculate_prediction_improvement(
+                cause_values, effect_values, lag
+            )
+            
+            if improvement > best_improvement:
+                best_improvement = improvement
+                best_lag = lag
+        
+        granger_results['causality_strength'] = best_improvement
+        granger_results['optimal_lags'] = best_lag
+        granger_results['direction_confidence'] = min(best_improvement * 2.0, 1.0)
+        
+        # Simplified F-statistic approximation
+        if best_improvement > 0:
+            granger_results['f_statistic'] = best_improvement * 10.0
+            granger_results['p_value'] = max(0.01, 1.0 - best_improvement)
+        
+        return granger_results
+    
+    def conduct_comprehensive_temporal_analysis(self, temporal_data: Dict[str, List[Tuple[datetime, float]]]) -> Dict[str, Any]:
+        """Conduct comprehensive temporal dynamics analysis."""
+        comprehensive_analysis = {
+            'temporal_patterns': {},
+            'causality_network': {},
+            'system_dynamics': {},
+            'predictive_insights': {}
+        }
+        
+        # Analyze temporal patterns for each variable
+        for var_name, time_series in temporal_data.items():
+            patterns = {
+                'cyclical_patterns': self.detect_cyclical_patterns(time_series),
+                'trend_analysis': self._analyze_trends(time_series),
+                'volatility_analysis': self._analyze_volatility(time_series)
+            }
+            comprehensive_analysis['temporal_patterns'][var_name] = patterns
+        
+        # Cross-variable causality analysis
+        var_names = list(temporal_data.keys())
+        for i, cause_var in enumerate(var_names):
+            for j, effect_var in enumerate(var_names):
+                if i != j:
+                    causality_test = self.perform_granger_causality_test(
+                        temporal_data[cause_var], temporal_data[effect_var]
+                    )
+                    comprehensive_analysis['causality_network'][f'{cause_var}->{effect_var}'] = causality_test
+        
+        # System-level dynamics
+        all_causality_strengths = [
+            result['causality_strength'] 
+            for result in comprehensive_analysis['causality_network'].values()
+        ]
+        
+        comprehensive_analysis['system_dynamics'] = {
+            'average_causality_strength': sum(all_causality_strengths) / len(all_causality_strengths) if all_causality_strengths else 0.0,
+            'temporal_complexity': len([s for s in all_causality_strengths if s > 0.3]),
+            'system_responsiveness': max(all_causality_strengths) if all_causality_strengths else 0.0,
+            'temporal_stability': 1.0 - (len([s for s in all_causality_strengths if s > 0.7]) / len(all_causality_strengths)) if all_causality_strengths else 1.0
+        }
+        
+        return comprehensive_analysis
+    
+    def _calculate_correlation(self, series1: List[float], series2: List[float]) -> float:
+        """Calculate correlation between two series."""
+        if len(series1) != len(series2) or len(series1) < 2:
+            return 0.0
+        
+        n = len(series1)
+        mean1 = sum(series1) / n
+        mean2 = sum(series2) / n
+        
+        numerator = sum((x - mean1) * (y - mean2) for x, y in zip(series1, series2))
+        sum_sq1 = sum((x - mean1) ** 2 for x in series1)
+        sum_sq2 = sum((y - mean2) ** 2 for y in series2)
+        
+        denominator = math.sqrt(sum_sq1 * sum_sq2)
+        
+        return numerator / denominator if denominator > 0 else 0.0
+    
+    def _calculate_prediction_improvement(self, cause: List[float], effect: List[float], lag: int) -> float:
+        """Calculate prediction improvement with lagged variables."""
+        if len(cause) <= lag or len(effect) <= lag:
+            return 0.0
+        
+        # Simple prediction improvement calculation
+        # This is a simplified version - full implementation would use regression analysis
+        
+        # Baseline prediction error (using only past values of effect)
+        baseline_error = self._calculate_prediction_error(effect[lag:], effect[:-lag])
+        
+        # Enhanced prediction error (using both past effect and lagged cause)
+        enhanced_error = self._calculate_prediction_error_with_cause(
+            effect[lag:], effect[:-lag], cause[:-lag]
+        )
+        
+        improvement = (baseline_error - enhanced_error) / baseline_error if baseline_error > 0 else 0.0
+        return max(0.0, improvement)
+    
+    def _calculate_prediction_error(self, actual: List[float], predicted: List[float]) -> float:
+        """Calculate mean squared prediction error."""
+        if len(actual) != len(predicted) or len(actual) == 0:
+            return float('inf')
+        
+        return sum((a - p) ** 2 for a, p in zip(actual, predicted)) / len(actual)
+    
+    def _calculate_prediction_error_with_cause(self, actual: List[float], 
+                                             effect_lagged: List[float], 
+                                             cause_lagged: List[float]) -> float:
+        """Calculate prediction error using both effect and cause variables."""
+        if len(actual) != len(effect_lagged) or len(actual) != len(cause_lagged):
+            return float('inf')
+        
+        # Simple linear combination prediction
+        predictions = []
+        for i in range(len(actual)):
+            pred = 0.7 * effect_lagged[i] + 0.3 * cause_lagged[i]
+            predictions.append(pred)
+        
+        return self._calculate_prediction_error(actual, predictions)
+    
+    def _analyze_trends(self, time_series: List[Tuple[datetime, float]]) -> Dict[str, float]:
+        """Analyze trend components in time series."""
+        if len(time_series) < 3:
+            return {'trend_slope': 0.0, 'trend_strength': 0.0}
+        
+        values = [val for _, val in time_series]
+        n = len(values)
+        
+        # Simple linear trend calculation
+        x_mean = (n - 1) / 2
+        y_mean = sum(values) / n
+        
+        numerator = sum((i - x_mean) * (values[i] - y_mean) for i in range(n))
+        denominator = sum((i - x_mean) ** 2 for i in range(n))
+        
+        slope = numerator / denominator if denominator > 0 else 0.0
+        
+        # Calculate trend strength (R-squared)
+        predicted = [slope * i + (y_mean - slope * x_mean) for i in range(n)]
+        ss_res = sum((values[i] - predicted[i]) ** 2 for i in range(n))
+        ss_tot = sum((values[i] - y_mean) ** 2 for i in range(n))
+        
+        r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0.0
+        
+        return {
+            'trend_slope': slope,
+            'trend_strength': max(0.0, r_squared)
+        }
+    
+    def _analyze_volatility(self, time_series: List[Tuple[datetime, float]]) -> Dict[str, float]:
+        """Analyze volatility patterns in time series."""
+        if len(time_series) < 2:
+            return {'volatility': 0.0, 'volatility_trend': 0.0}
+        
+        values = [val for _, val in time_series]
+        
+        # Calculate returns (differences)
+        returns = [values[i] - values[i-1] for i in range(1, len(values))]
+        
+        # Volatility (standard deviation of returns)
+        mean_return = sum(returns) / len(returns)
+        volatility = math.sqrt(sum((r - mean_return) ** 2 for r in returns) / len(returns))
+        
+        # Volatility trend (is volatility increasing or decreasing?)
+        if len(returns) >= 4:
+            first_half_vol = math.sqrt(sum(r ** 2 for r in returns[:len(returns)//2]) / (len(returns)//2))
+            second_half_vol = math.sqrt(sum(r ** 2 for r in returns[len(returns)//2:]) / (len(returns) - len(returns)//2))
+            volatility_trend = (second_half_vol - first_half_vol) / first_half_vol if first_half_vol > 0 else 0.0
+        else:
+            volatility_trend = 0.0
+        
+        return {
+            'volatility': volatility,
+            'volatility_trend': volatility_trend
+        }

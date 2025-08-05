@@ -834,10 +834,10 @@ class InstitutionalStructure(Node):
     """Represents institutional arrangements and their structural properties."""
     
     structure_type: str = "formal"  # Made string with default instead of enum to fix ordering
-    governance_mechanism: GovernanceMechanism = GovernanceMechanism.HIERARCHICAL
-    decision_making_process: DecisionMakingType = DecisionMakingType.AUTOCRATIC
-    enforcement_mechanism: EnforcementType = EnforcementType.LEGAL
-    scope: InstitutionalScope = InstitutionalScope.LOCAL
+    governance_mechanism: str = "hierarchical"  # Made string with default instead of enum
+    decision_making_process: str = "autocratic"  # Made string with default instead of enum
+    enforcement_mechanism: str = "legal"  # Made string with default instead of enum
+    scope: str = "local"  # Made string with default instead of enum
     legitimacy_source: Optional[str] = None  # What gives this institution legitimacy
     power_distribution: Dict[str, float] = field(default_factory=lambda: {})  # How power is distributed
     accountability_mechanisms: List[str] = field(default_factory=lambda: [])  # How institution is held accountable
@@ -852,7 +852,7 @@ class InstitutionalStructure(Node):
 class TransactionCost(Node):
     """Analysis of costs associated with institutional transactions."""
     
-    cost_type: TransactionCostType = TransactionCostType.SEARCH_INFORMATION
+    cost_type: str = "search_information"  # Made string with default instead of enum
     cost_amount: Optional[float] = None  # Monetary cost if quantifiable
     time_cost: Optional[float] = None    # Time required
     uncertainty_cost: Optional[float] = None  # Risk/uncertainty costs

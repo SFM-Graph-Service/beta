@@ -16,14 +16,8 @@ from datetime import datetime
 from enum import Enum, auto
 
 from models.base_nodes import Node
-# Note: SystemLevel, ScaleType, and IntegrationMechanism are defined locally in this file
-# InstitutionalScope is imported from models.sfm_enums
-from models.sfm_enums import (
-    # SystemLevel,  # Defined locally
-    InstitutionalScope,
-    # ScaleType,  # Defined locally
-    # IntegrationMechanism  # Defined locally
-)
+from models.sfm_enums import InstitutionalScope
+# Note: SystemLevel, ScaleType, IntegrationMechanism, and ScaleInteractionType are defined locally in this file rather than imported from models.sfm_enums
 
 
 class SystemLevel(Enum):
