@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Set, Union, Tuple, Any
+from typing import Dict, List, Optional, Tuple, Any
 from datetime import datetime, timedelta
 from enum import Enum, auto
 
@@ -712,7 +712,7 @@ class AdvancedLobbyingProcess(Node):
 
         # Resource efficiency analysis
         total_spending = sum(self.financial_expenditures.values())
-        total_personnel = sum(self.personnel_allocation.values())
+        _total_personnel = sum(self.personnel_allocation.values())  # Reserved for future use
 
         if total_spending > 0:
             cost_per_success = total_spending / (successful_agenda_items + len(self.policy_modifications)) if (successful_agenda_items + len(self.policy_modifications)) > 0 else float('inf')
@@ -1150,7 +1150,7 @@ class LegislativeProcessModeling(Node):
 
         # Timing optimization
         calendar_conflicts = []
-        for date_name, date_value in self.legislative_calendar.items():
+        for date_name, _date_value in self.legislative_calendar.items():
             # Check for scheduling conflicts (simplified)
             if 'recess' in date_name.lower() or 'break' in date_name.lower():
                 calendar_conflicts.append(date_name)
@@ -1771,5 +1771,3 @@ class CrossInstitutionalCoordination(Node):
             {'step': 2, 'description': 'Establish communication protocols', 'duration_days': 5},
             {'step': 3, 'description': 'Begin policy implementation', 'duration_days': 30}
         ]
-
-        return sustainability_analysis
