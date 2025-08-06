@@ -808,8 +808,8 @@ class AdvancedLobbyingProcess(Node):
             # Generate optimization recommendations
             if ceremonial_ratio > 0.7:
                 ci_analysis['optimization_recommendations'].append(
-                    'Consider increasing instrumental,
-                    problem-solving focus in lobbying efforts')
+                    'Consider increasing instrumental, '
+                    'problem-solving focus in lobbying efforts')
             elif instrumental_ratio > 0.8:
                 ci_analysis['optimization_recommendations'].append('Consider relationship-building and ceremonial elements to enhance access')
 
