@@ -56,7 +56,6 @@ pyright models/
 - `too-many-instance-attributes`: SFM framework legitimately requires many attributes
 - `too-many-lines`: Large files acceptable for comprehensive frameworks
 - `line-too-long`: Style preference, not functional issue
-- `missing-docstring`: Focus on functional issues first
 - `too-few-public-methods`: Acceptable for data classes and enums
 
 #### Ignored Issues (Documented)
@@ -75,37 +74,6 @@ When adding new code:
 4. Ensure type annotations are present for public APIs
 5. Add docstrings for public methods and classes
 
-### CI/CD Integration
-
-Consider adding GitHub Actions workflow for automated linting:
-
-```yaml
-name: Code Quality
-on: [push, pull_request]
-jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.12'
-      - run: pip install pylint pyright
-      - run: pylint models/
-      - run: pyright models/
-```
-
-## Development
-
-### Prerequisites
-- Python 3.12+
-- pylint (`pip install pylint`)
-- pyright (`pip install pyright`)
-
-### Structure
-- `models/`: Core SFM framework data models and analysis tools
-- `.pylintrc`: Pylint configuration
-- `pyrightconfig.json`: Type checking configuration
 
 ## Contributing
 

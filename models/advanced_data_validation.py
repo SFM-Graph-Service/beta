@@ -24,10 +24,9 @@ from abc import ABC, abstractmethod
 import logging
 
 from models.base_nodes import Node
-from models.core_nodes import Indicator, Actor, Institution, Flow, Relationship
 from models.matrix_construction import MatrixCell, DeliveryMatrix
-from models.sfm_enums import ValueCategory, InstitutionType, RelationshipKind
-from models.realtime_data_integration import ValidationRule, ValidationSeverity, DataRecord
+from models.sfm_enums import ValueCategory, RelationshipKind
+from models.realtime_data_integration import ValidationSeverity, DataRecord
 
 # Logging setup
 logger = logging.getLogger(__name__)
@@ -559,8 +558,8 @@ class DataQualityAnalyzer:
         return validation_result.quality_score
 
     def calculate_overall_quality_score(self, data: Dict[str, Any], validation_result: ValidationResult,
-                                      required_fields: Set[str] = None,
-                                      historical_data: List[Dict[str, Any]] = None) -> Dict[str, Any]:
+                                      required_fields: Optional[Set[str]] = None,
+                                      historical_data: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
         """Calculate comprehensive data quality score."""
 
         required_fields = required_fields or set()
