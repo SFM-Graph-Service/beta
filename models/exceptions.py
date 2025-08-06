@@ -17,7 +17,6 @@ from datetime import datetime, timezone
 from typing import Dict, Optional, Any, Union
 from enum import Enum
 
-
 class ErrorCode(str, Enum):  # pylint: disable=R0903
     # Too few public methods - enum classes typically have only value attributes
     """Standardized error codes for SFM operations."""
@@ -53,7 +52,6 @@ class ErrorCode(str, Enum):  # pylint: disable=R0903
     # Security errors
     SECURITY_VALIDATION_ERROR = "SECURITY_VALIDATION_ERROR"
     PERMISSION_DENIED_ERROR = "PERMISSION_DENIED_ERROR"
-
 
 class ErrorContext:  # pylint: disable=R0902,R0903
     # R0902: Too many instance attributes - needed for comprehensive error context
@@ -93,7 +91,6 @@ class ErrorContext:  # pylint: disable=R0902,R0903
             "additional_data": self.additional_data
         }
 
-
 class SFMError(Exception):
     """Base exception for all SFM-related errors."""
 
@@ -128,7 +125,6 @@ class SFMError(Exception):
             }
         }
 
-
 class SFMValidationError(SFMError):
     """Base class for validation-related errors."""
 
@@ -158,7 +154,6 @@ class SFMValidationError(SFMError):
             remediation=remediation,
             details=details
         )
-
 
 class SFMNotFoundError(SFMError):
     """Exception raised when a requested entity is not found."""
@@ -192,7 +187,6 @@ class SFMNotFoundError(SFMError):
             details=details
         )
 
-
 class SFMIntegrityError(SFMError):
     """Exception raised when data integrity constraints are violated."""
 
@@ -211,7 +205,6 @@ class SFMIntegrityError(SFMError):
             remediation=remediation,
             details=details
         )
-
 
 # Graph-specific exceptions
 class GraphOperationError(SFMError):
@@ -232,7 +225,6 @@ class GraphOperationError(SFMError):
             context=context,
             remediation=remediation
         )
-
 
 class NodeCreationError(GraphOperationError):
     """Exception for node creation failures."""
@@ -259,7 +251,6 @@ class NodeCreationError(GraphOperationError):
             remediation=remediation
         )
 
-
 class NodeUpdateError(GraphOperationError):
     """Exception for node update failures."""
 
@@ -285,7 +276,6 @@ class NodeUpdateError(GraphOperationError):
             remediation=remediation
         )
 
-
 class NodeDeleteError(GraphOperationError):
     """Exception for node deletion failures."""
 
@@ -310,7 +300,6 @@ class NodeDeleteError(GraphOperationError):
             context=context,
             remediation=remediation
         )
-
 
 class RelationshipValidationError(SFMValidationError):
     """Exception for relationship validation failures."""
@@ -342,7 +331,6 @@ class RelationshipValidationError(SFMValidationError):
         )
         self.details.update(details)
 
-
 # Query-specific exceptions
 class QueryExecutionError(SFMError):
     """Exception for query execution failures."""
@@ -368,7 +356,6 @@ class QueryExecutionError(SFMError):
             details=details
         )
 
-
 class QueryTimeoutError(QueryExecutionError):
     """Exception for query timeout failures."""
 
@@ -393,7 +380,6 @@ class QueryTimeoutError(QueryExecutionError):
         self.error_code = ErrorCode.QUERY_TIMEOUT_ERROR
         self.details.update(details)
 
-
 # Database-specific exceptions
 class DatabaseError(SFMError):
     """Base exception for database-related errors."""
@@ -411,7 +397,6 @@ class DatabaseError(SFMError):
             context=context,
             remediation=remediation
         )
-
 
 class DatabaseConnectionError(DatabaseError):
     """Exception for database connection failures."""
@@ -431,7 +416,6 @@ class DatabaseConnectionError(DatabaseError):
         )
         self.details.update(details)
 
-
 class DatabaseTransactionError(DatabaseError):
     """Exception for database transaction failures."""
 
@@ -449,7 +433,6 @@ class DatabaseTransactionError(DatabaseError):
             remediation="Transaction may have been rolled back. Retry the operation."
         )
         self.details.update(details)
-
 
 # Security-specific exceptions
 class SecurityValidationError(SFMValidationError):
@@ -471,7 +454,6 @@ class SecurityValidationError(SFMValidationError):
         )
         self.error_code = ErrorCode.SECURITY_VALIDATION_ERROR
         self.details.update(details)
-
 
 class PermissionDeniedError(SFMError):
     """Exception for permission denied errors."""
@@ -495,19 +477,16 @@ class PermissionDeniedError(SFMError):
             details=details
         )
 
-
 # Convenience functions for creating common errors
 def create_not_found_error(entity_type: str, entity_id: Union[str, uuid.UUID]) -> SFMNotFoundError:
     """Create a standardized not found error."""
     return SFMNotFoundError(entity_type=entity_type, entity_id=entity_id)
-
 
 def create_validation_error(
     message: str, field: Optional[str] = None, value: Any = None
 ) -> SFMValidationError:
     """Create a standardized validation error."""
     return SFMValidationError(message=message, field=field, value=value)
-
 
 def create_node_creation_error(
     message: str,
@@ -517,11 +496,9 @@ def create_node_creation_error(
     """Create a standardized node creation error."""
     return NodeCreationError(message=message, node_type=node_type, node_id=node_id)
 
-
 def create_query_error(message: str, query: Optional[str] = None) -> QueryExecutionError:
     """Create a standardized query execution error."""
     return QueryExecutionError(message=message, query=query)
-
 
 def create_database_error(
     message: str, database_type: Optional[str] = None

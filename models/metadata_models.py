@@ -14,7 +14,6 @@ from datetime import datetime
 from models.meta_entities import TimeSlice
 from models.sfm_enums import TemporalFunctionType, ValidationRuleType
 
-
 @dataclass
 class TemporalDynamics:
     """Models change over time for any value."""
@@ -25,7 +24,6 @@ class TemporalDynamics:
     function_type: TemporalFunctionType = TemporalFunctionType.LINEAR
     parameters: Dict[str, float] = field(default_factory=lambda: {})
 
-
 @dataclass
 class ValidationRule:
     """Defines a validation rule for data integrity."""
@@ -34,7 +32,6 @@ class ValidationRule:
     target_field: str
     parameters: Dict[str, Any] = field(default_factory=lambda: {})
     error_message: str = ""
-
 
 @dataclass
 class ModelMetadata:  # pylint: disable=too-many-instance-attributes

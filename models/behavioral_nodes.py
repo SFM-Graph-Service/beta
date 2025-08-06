@@ -27,7 +27,6 @@ from models.sfm_enums import (
     BehaviorPatternType,
 )
 
-
 @dataclass
 class ValueHierarchy(Node):
     """Hierarchical value structure that guides institutional behavior (simple version)."""
@@ -37,7 +36,6 @@ class ValueHierarchy(Node):
     cultural_domain: Optional[str] = None
     legitimacy_source: Optional[LegitimacySource] = None  # Weber's authority types
 
-
 @dataclass
 class CeremonialBehavior(Node):
     """Hayden's ceremonial behaviors that resist change."""
@@ -46,7 +44,6 @@ class CeremonialBehavior(Node):
     tradition_strength: Optional[float] = None
     resistance_to_change: Optional[float] = None
 
-
 @dataclass
 class InstrumentalBehavior(Node):
     """Problem-solving, adaptive behaviors."""
@@ -54,7 +51,6 @@ class InstrumentalBehavior(Node):
     efficiency_measure: Optional[float] = None
     adaptability_score: Optional[float] = None
     innovation_potential: Optional[float] = None
-
 
 @dataclass
 class ChangeProcess(Node):
@@ -69,7 +65,6 @@ class ChangeProcess(Node):
     success_probability: Optional[float] = None
     temporal_dynamics: Optional[TemporalDynamics] = None  # Detailed change over time
 
-
 @dataclass
 class CognitiveFramework(Node):
     """Mental models and worldviews that shape perception."""
@@ -78,7 +73,6 @@ class CognitiveFramework(Node):
     cognitive_biases: List[str] = field(default_factory=lambda: [])
     information_filters: List[str] = field(default_factory=lambda: [])
     learning_capacity: Optional[float] = None
-
 
 @dataclass
 class BehavioralPattern(Node):

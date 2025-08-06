@@ -12,7 +12,6 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Dict, Iterator, Optional, Tuple
 
-
 @dataclass
 class Node:  # pylint: disable=too-many-instance-attributes
     """Generic graph node with a UUID primary key and free-form metadata."""

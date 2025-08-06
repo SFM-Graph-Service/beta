@@ -5,17 +5,19 @@ Comprehensive SFM framework implementation with core and analytical classes.
 
 # Base nodes
 from .base_nodes import Node
+
 # Core SFM classes
 from .core_nodes import Actor, Institution, Policy, Resource, Process, Flow
-# Specialized SFM analytical classes
-# Note: Temporarily commenting out specialized_nodes due to import error
-# from .specialized_nodes import (
-#     SFMCriteria, MatrixCell,
-#     InstitutionalStructure, TransactionCost, CoordinationMechanism,
-#     SocialValueAssessment, PathDependencyAnalysis,
-#     CommonsGovernance, SystemLevelAnalysis
-# )
-# New comprehensive SFM framework components
+
+# Specialized SFM analytical classes - only import actual defined classes
+from .specialized_nodes import (
+    SystemProperty, PolicyInstrument, MatrixCell, SFMCriteria,
+    InstitutionalStructure, TransactionCost, CoordinationMechanism,
+    SocialValueAssessment, PathDependencyAnalysis,
+    CommonsGovernance, SystemLevelAnalysis
+)
+
+# Framework components
 from .system_boundary import (
     SystemBoundary, ProblemDefinition, AnalysisScope, BoundaryValidator
 )
@@ -36,7 +38,7 @@ from .criteria_framework import (
     MultiCriteriaAnalysis
 )
 
-# Enhanced SFM framework components - Core missing pieces
+# Enhanced SFM framework components
 from .sfm_standardized_criteria import (
     HaydenStandardCriteria, CriteriaTaxonomy, CriteriaSpecification,
     CriteriaWeighting, CriteriaValidation
@@ -49,6 +51,7 @@ from .sfm_policy_alternatives import (
     PolicyAlternative, AlternativeAnalysis, PolicyImpactAssessment,
     AlternativeComparison, PolicyRecommendation
 )
+
 from .sfm_system_integration import (
     SFMSystemIntegrator, SystemIntegrationValidator, IntegratedAnalysisFramework,
     SystemCoherenceChecker, IntegrationQualityAssurance
@@ -69,11 +72,11 @@ __all__ = [
     'Node',
     # Core SFM classes
     'Actor', 'Institution', 'Policy', 'Resource', 'Process', 'Flow',
-    # Specialized SFM analytical classes (temporarily disabled)
-    # 'SFMCriteria', 'MatrixCell',
-    # 'InstitutionalStructure', 'TransactionCost', 'CoordinationMechanism',
-    # 'SocialValueAssessment', 'PathDependencyAnalysis',
-    # 'CommonsGovernance', 'SystemLevelAnalysis',
+    # Specialized SFM analytical classes
+    'SystemProperty', 'PolicyInstrument', 'MatrixCell', 'SFMCriteria',
+    'InstitutionalStructure', 'TransactionCost', 'CoordinationMechanism',
+    'SocialValueAssessment', 'PathDependencyAnalysis',
+    'CommonsGovernance', 'SystemLevelAnalysis',
     # System boundary and problem definition
     'SystemBoundary', 'ProblemDefinition', 'AnalysisScope', 'BoundaryValidator',
     # Social value systems
@@ -88,7 +91,7 @@ __all__ = [
     # Criteria framework
     'CriteriaFramework', 'EvaluationCriterion', 'CriteriaApplication',
     'MultiCriteriaAnalysis',
-    # Enhanced SFM framework components - Core missing pieces
+    # Enhanced SFM framework components
     'HaydenStandardCriteria', 'CriteriaTaxonomy', 'CriteriaSpecification',
     'CriteriaWeighting', 'CriteriaValidation',
     'InstitutionalActor', 'InstitutionalMapping', 'InstitutionalNetwork',

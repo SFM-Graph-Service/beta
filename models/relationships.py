@@ -16,7 +16,6 @@ from models.meta_entities import TimeSlice, SpatialUnit, Scenario
 from models.metadata_models import TemporalDynamics
 from models.sfm_enums import RelationshipKind
 
-
 @dataclass
 class Relationship:  # pylint: disable=too-many-instance-attributes
     """Typed edge connecting two nodes in the SFM graph."""
