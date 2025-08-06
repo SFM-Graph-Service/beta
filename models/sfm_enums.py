@@ -2854,6 +2854,151 @@ class MatrixConstructionStage(Enum):
 
 
 # ───────────────────────────────────────────────
+# STAKEHOLDER AND ENGAGEMENT ENUMS
+# ───────────────────────────────────────────────
+
+
+class StakeholderType(Enum):
+    """Types of stakeholders in SFM analysis."""
+    
+    GOVERNMENT_AGENCY = auto()
+    REGULATORY_BODY = auto()
+    ELECTED_OFFICIAL = auto()
+    COMMUNITY_GROUP = auto()
+    CIVIL_SOCIETY_ORGANIZATION = auto()
+    NONPROFIT_ORGANIZATION = auto()
+    BUSINESS_ASSOCIATION = auto()
+    PRIVATE_COMPANY = auto()
+    LABOR_UNION = auto()
+    ACADEMIC_INSTITUTION = auto()
+    RESEARCH_ORGANIZATION = auto()
+    MEDIA_OUTLET = auto()
+    INTERNATIONAL_ORGANIZATION = auto()
+    INDIGENOUS_GROUP = auto()
+    RELIGIOUS_ORGANIZATION = auto()
+    PROFESSIONAL_ASSOCIATION = auto()
+    ADVOCACY_GROUP = auto()
+    THINK_TANK = auto()
+    INDIVIDUAL_CITIZEN = auto()
+    EXPERT_CONSULTANT = auto()
+
+
+class ParticipationLevel(Enum):
+    """Levels of stakeholder participation."""
+    
+    INFORMED = auto()           # Receives information only
+    CONSULTED = auto()          # Provides input when asked
+    INVOLVED = auto()           # Participates in analysis and option development
+    COLLABORATIVE = auto()      # Partners in decision-making
+    EMPOWERED = auto()          # Has decision-making authority
+
+
+class DecisionMakingApproach(Enum):
+    """Approaches to democratic decision-making."""
+    
+    CONSENSUS_BUILDING = auto()
+    MAJORITY_VOTING = auto()
+    DELIBERATIVE_POLLING = auto()
+    COLLABORATIVE_GOVERNANCE = auto()
+    PARTICIPATORY_BUDGETING = auto()
+    CITIZENS_JURY = auto()
+    STAKEHOLDER_DIALOGUE = auto()
+    EXPERT_PANELS = auto()
+    REPRESENTATIVE_DEMOCRACY = auto()
+    DIRECT_DEMOCRACY = auto()
+
+
+class ConflictResolutionMethod(Enum):
+    """Methods for resolving conflicts."""
+    
+    COLLABORATIVE_PROBLEM_SOLVING = auto()
+    MEDIATION = auto()
+    ARBITRATION = auto()
+    NEGOTIATION = auto()
+    FACILITATED_DIALOGUE = auto()
+    RESTORATIVE_JUSTICE = auto()
+    TRADITIONAL_ADJUDICATION = auto()
+    MULTI_STAKEHOLDER_PROCESSES = auto()
+    COMMUNITY_CONFERENCING = auto()
+    PEACE_CIRCLES = auto()
+
+
+class CommunicationChannel(Enum):
+    """Channels for stakeholder communication."""
+    
+    FACE_TO_FACE_MEETINGS = auto()
+    VIDEO_CONFERENCING = auto()
+    PHONE_CALLS = auto()
+    EMAIL = auto()
+    WRITTEN_CORRESPONDENCE = auto()
+    ONLINE_PLATFORMS = auto()
+    SOCIAL_MEDIA = auto()
+    WEBSITES = auto()
+    NEWSLETTERS = auto()
+    REPORTS = auto()
+    SURVEYS = auto()
+    FOCUS_GROUPS = auto()
+    WORKSHOPS = auto()
+    CONFERENCES = auto()
+    PUBLIC_HEARINGS = auto()
+    TOWN_HALLS = auto()
+    COMMUNITY_MEETINGS = auto()
+    MOBILE_APPLICATIONS = auto()
+    TEXT_MESSAGING = auto()
+    TRADITIONAL_MEDIA = auto()
+
+
+class LearningMethod(Enum):
+    """Methods for institutional learning."""
+    
+    EXPERIENTIAL_LEARNING = auto()
+    ACTION_LEARNING = auto()
+    CASE_STUDY_ANALYSIS = auto()
+    BEST_PRACTICE_SHARING = auto()
+    PEER_LEARNING = auto()
+    COMMUNITIES_OF_PRACTICE = auto()
+    FORMAL_TRAINING = auto()
+    MENTORING_COACHING = auto()
+    REFLECTION_SESSIONS = auto()
+    AFTER_ACTION_REVIEWS = auto()
+    LESSONS_LEARNED_SESSIONS = auto()
+    KNOWLEDGE_SHARING_WORKSHOPS = auto()
+    CROSS_FUNCTIONAL_TEAMS = auto()
+    SIMULATION_EXERCISES = auto()
+    PILOT_PROJECTS = auto()
+    RESEARCH_COLLABORATION = auto()
+    EXTERNAL_PARTNERSHIPS = auto()
+    CONFERENCE_PARTICIPATION = auto()
+    PUBLICATION_WRITING = auto()
+    SYSTEMATIC_EXPERIMENTATION = auto()
+
+
+class InformationSystem(Enum):
+    """Types of information systems."""
+    
+    KNOWLEDGE_MANAGEMENT_SYSTEM = auto()
+    DOCUMENT_MANAGEMENT_SYSTEM = auto()
+    LEARNING_MANAGEMENT_SYSTEM = auto()
+    COLLABORATION_PLATFORM = auto()
+    DATA_WAREHOUSE = auto()
+    DECISION_SUPPORT_SYSTEM = auto()
+    EXPERT_SYSTEM = auto()
+    CONTENT_MANAGEMENT_SYSTEM = auto()
+    WORKFLOW_MANAGEMENT_SYSTEM = auto()
+    PROJECT_MANAGEMENT_SYSTEM = auto()
+    CUSTOMER_RELATIONSHIP_MANAGEMENT = auto()
+    ENTERPRISE_RESOURCE_PLANNING = auto()
+    BUSINESS_INTELLIGENCE_SYSTEM = auto()
+    GEOGRAPHIC_INFORMATION_SYSTEM = auto()
+    COMMUNICATION_SYSTEM = auto()
+    MONITORING_SYSTEM = auto()
+    EVALUATION_SYSTEM = auto()
+    REPORTING_SYSTEM = auto()
+    ANALYTICS_PLATFORM = auto()
+    SOCIAL_NETWORK_PLATFORM = auto()
+
+
+# ───────────────────────────────────────────────
 # ERROR HANDLING AND VALIDATION
 # ───────────────────────────────────────────────
 

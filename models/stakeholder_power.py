@@ -228,7 +228,7 @@ class PowerRelationship(Node):
     
     power_holder: Optional[uuid.UUID] = None  # Actor with power
     power_target: Optional[uuid.UUID] = None  # Actor subject to power
-    relationship_type: Optional[PowerRelationType] = None
+    relationship_type: Optional[PowerDynamic] = None
     
     # Relationship characteristics
     power_asymmetry: Optional[float] = None  # Degree of asymmetry (0-1)
