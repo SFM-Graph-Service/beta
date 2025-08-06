@@ -35,6 +35,31 @@ from .criteria_framework import (
     CriteriaFramework, EvaluationCriterion, CriteriaApplication,
     MultiCriteriaAnalysis
 )
+
+# Enhanced SFM framework components - Core missing pieces
+from .sfm_standardized_criteria import (
+    HaydenStandardCriteria, CriteriaTaxonomy, CriteriaSpecification,
+    CriteriaWeighting, CriteriaValidation
+)
+from .sfm_institutional_mapping import (
+    InstitutionalActor, InstitutionalMapping, InstitutionalNetwork,
+    InstitutionalHierarchy, InstitutionalRoleAnalysis
+)
+from .sfm_policy_alternatives import (
+    PolicyAlternative, AlternativeAnalysis, PolicyImpactAssessment,
+    AlternativeComparison, PolicyRecommendation
+)
+from .sfm_system_integration import (
+    SFMSystemIntegrator, SystemIntegrationValidator, IntegratedAnalysisFramework,
+    SystemCoherenceChecker, IntegrationQualityAssurance
+)
+
+# Existing specialized SFM modules
+from .stakeholder_power import (
+    PowerAssessment, InfluenceNetwork, StakeholderCoalition,
+    PowerRelationship, PowerMap, PowerShift
+)
+
 # Enums and exceptions
 from .sfm_enums import *
 from .exceptions import *
@@ -63,4 +88,16 @@ __all__ = [
     # Criteria framework
     'CriteriaFramework', 'EvaluationCriterion', 'CriteriaApplication',
     'MultiCriteriaAnalysis',
+    # Enhanced SFM framework components - Core missing pieces
+    'HaydenStandardCriteria', 'CriteriaTaxonomy', 'CriteriaSpecification',
+    'CriteriaWeighting', 'CriteriaValidation',
+    'InstitutionalActor', 'InstitutionalMapping', 'InstitutionalNetwork',
+    'InstitutionalHierarchy', 'InstitutionalRoleAnalysis',
+    'PolicyAlternative', 'AlternativeAnalysis', 'PolicyImpactAssessment',
+    'AlternativeComparison', 'PolicyRecommendation',
+    'SFMSystemIntegrator', 'SystemIntegrationValidator', 'IntegratedAnalysisFramework',
+    'SystemCoherenceChecker', 'IntegrationQualityAssurance',
+    # Existing specialized SFM modules
+    'PowerAssessment', 'InfluenceNetwork', 'StakeholderCoalition',
+    'PowerRelationship', 'PowerMap', 'PowerShift',
 ]
