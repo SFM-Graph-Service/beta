@@ -382,8 +382,7 @@ class PolicyAlternativeEvaluation(Node):
 
     # Evaluation matrix
     evaluation_matrix: Dict[Tuple[uuid.UUID, uuid.UUID], float] = field(
-        default_factory=lambda: {})  # (policy,
-        criteria) -> score
+        default_factory=lambda: {})  # (policy, criteria) -> score
     delivery_impact_analysis: Dict[uuid.UUID, Dict[str, float]] = field(default_factory=lambda: {})
 
     # Comparative analysis

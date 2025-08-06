@@ -124,10 +124,7 @@ class MatrixCell(Node):  # pylint: disable=too-many-instance-attributes
     resource_flows: Dict[str, float] = field(default_factory=lambda: {})  # Resource type -> flow amount
 
     # Network Process Integration
-    network_position: Optional[str] = None  # Position in network (
-        "central",
-        "peripheral",
-        "bridge")
+    network_position: Optional[str] = None  # Position in network ("central", "peripheral", "bridge")
     network_influence: Optional[float] = None  # Influence within network (0-1)
     feedback_loops: List[Dict[str, Any]] = field(default_factory=lambda: [])  # Feedback relationships
     system_criticality: Optional[float] = None  # Criticality to overall system (0-1)
@@ -1799,9 +1796,7 @@ class SocialAccountingMatrix(Node):
 
     # Matrix structure
     accounts: List[str] = field(
-        default_factory=lambda: [])  # SAM accounts (sectors,
-        institutions,
-        factors)
+        default_factory=lambda: [])  # SAM accounts (sectors, institutions, factors)
     flow_matrix: Dict[str, Dict[str, float]] = field(default_factory=lambda: {})  # From account -> To account -> flow value
 
     # SFM integration

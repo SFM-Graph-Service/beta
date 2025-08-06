@@ -11,8 +11,7 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Set, Union
-from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Tuple
 from enum import Enum, auto
 
 from models.base_nodes import Node
@@ -22,8 +21,7 @@ from models.sfm_enums import (
     # LearningType,  # Defined locally
     # AdaptationMechanism,  # Defined locally
     EvolutionaryStage,
-    InstitutionalScope,
-    ChangeType
+    InstitutionalScope
 )
 
 class LearningType(Enum):
