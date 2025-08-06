@@ -22,7 +22,7 @@ from models.sfm_enums import (
 )
 
 @dataclass
-class Actor(Node):
+class Actor(Node):  # pylint: disable=too-many-instance-attributes
     """Individuals, firms, agencies, communities."""
 
     legal_form: Optional[str] = None  # e.g. "Corporation", "Household"
@@ -38,8 +38,8 @@ class Actor(Node):
     # Advanced stakeholder power analysis
     network_centrality: Optional[float] = None  # Network position centrality (0-1)
     coalition_memberships: List[uuid.UUID] = field(default_factory=lambda: [])
-    influence_relationships: Dict[uuid.UUID, float] = field(default_factory=lambda: {})  # Actor -> influence level
-    resource_dependencies: Dict[uuid.UUID, str] = field(default_factory=lambda: {})  # Actor -> dependency type
+    influence_relationships: Dict[uuid.UUID, float] = field(default_factory=lambda: {})  # Actor -> influence level  # pylint: disable=line-too-long
+    resource_dependencies: Dict[uuid.UUID, str] = field(default_factory=lambda: {})  # Actor -> dependency type  # pylint: disable=line-too-long
     bargaining_power: Optional[float] = None  # Relative bargaining strength (0-1)
     veto_power: List[str] = field(default_factory=lambda: [])  # Areas where actor has veto power
     agenda_setting_power: Optional[float] = None  # Ability to set agendas (0-1)
@@ -54,7 +54,7 @@ class Actor(Node):
     authority_scope: List[str] = field(default_factory=lambda: [])  # Areas of recognized authority
     legitimacy_challenges: List[str] = field(default_factory=lambda: [])  # Threats to legitimacy
 
-    def calculate_power_index(self) -> float:
+    def calculate_power_index(self) -> float:  # pylint: disable=too-many-locals
         """Calculate overall power index based on power resources."""
         if not self.power_resources:
             return 0.0
@@ -268,7 +268,7 @@ class Actor(Node):
         return engagement_strategy
 
 @dataclass
-class Institution(Node):
+class Institution(Node):  # pylint: disable=too-many-instance-attributes,too-many-public-methods
     """Formal rules, informal norms, cultural practices."""
 
     formality_level: Optional[str] = None  # "formal" | "informal" | "mixed"
@@ -526,7 +526,7 @@ class Institution(Node):
         ]
 
 @dataclass
-class Policy(Institution):
+class Policy(Institution):  # pylint: disable=too-many-instance-attributes,too-many-public-methods
     """Specific policy intervention or regulatory framework."""
 
     authority: Optional[str] = None  # Implementing body

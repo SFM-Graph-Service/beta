@@ -791,7 +791,7 @@ class ContinuousImprovement(Node):
         return improvement_report
 
 @dataclass
-class MatrixQualityAssurance(Node):
+class MatrixQualityAssurance(Node):  # pylint: disable=too-many-instance-attributes
     """Comprehensive quality assurance framework for SFM matrices."""
 
     qa_framework_scope: Optional[str] = None

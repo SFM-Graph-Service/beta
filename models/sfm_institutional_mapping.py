@@ -195,7 +195,7 @@ class InstitutionalActor(Node):
     stakeholder_representation: List[uuid.UUID] = field(default_factory=list)
 
 @dataclass
-class InstitutionalMapping(Node):
+class InstitutionalMapping(Node):  # pylint: disable=too-many-instance-attributes
     """Systematic process for mapping institutional actors."""
 
     mapping_scope: Optional[str] = None

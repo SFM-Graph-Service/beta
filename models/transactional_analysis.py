@@ -59,7 +59,7 @@ class TransactionOutcome(Enum):
     BREAKDOWN = auto()        # Transaction failure
 
 @dataclass
-class Transaction(Node):
+class Transaction(Node):  # pylint: disable=too-many-instance-attributes
     """Models individual transactions within SFM institutional analysis."""
 
     transaction_type: Optional[TransactionType] = None
@@ -100,7 +100,7 @@ class Transaction(Node):
     institutional_adjustments: List[uuid.UUID] = field(default_factory=list)
 
 @dataclass
-class BargainingTransaction(Transaction):
+class BargainingTransaction(Transaction):  # pylint: disable=too-many-instance-attributes
     """Models market-type bargaining transactions between legal equals."""
 
     def __post_init__(self):
@@ -127,7 +127,7 @@ class BargainingTransaction(Transaction):
     instrumental_innovations: List[str] = field(default_factory=list)
 
 @dataclass
-class ManagerialTransaction(Transaction):
+class ManagerialTransaction(Transaction):  # pylint: disable=too-many-instance-attributes
     """Models hierarchical transactions with authority/subordination relationships."""
 
     def __post_init__(self):
@@ -160,7 +160,7 @@ class ManagerialTransaction(Transaction):
     adaptive_capacity: Optional[float] = None  # 0-1 scale
 
 @dataclass
-class RationingTransaction(Transaction):
+class RationingTransaction(Transaction):  # pylint: disable=too-many-instance-attributes
     """Models collective choice/rationing transactions in governance contexts."""
 
     def __post_init__(self):
@@ -194,7 +194,7 @@ class RationingTransaction(Transaction):
     policy_implementation_effects: List[uuid.UUID] = field(default_factory=list)
 
 @dataclass
-class TransactionCosts(Node):
+class TransactionCosts(Node):  # pylint: disable=too-many-instance-attributes
     """Models transaction costs associated with institutional coordination."""
 
     transaction_id: Optional[uuid.UUID] = None
@@ -224,7 +224,7 @@ class TransactionCosts(Node):
     matrix_optimization_potential: Optional[float] = None  # System-wide savings
 
 @dataclass
-class InstitutionalContract(Node):
+class InstitutionalContract(Node):  # pylint: disable=too-many-instance-attributes
     """Models formal and informal contracts governing transactional relationships."""
 
     contract_type: Optional[str] = None  # e.g., "Formal", "Relational", "Implicit"
@@ -257,7 +257,7 @@ class InstitutionalContract(Node):
     matrix_stability_contribution: Optional[float] = None
 
 @dataclass
-class TransactionalRegime(Node):
+class TransactionalRegime(Node):  # pylint: disable=too-many-instance-attributes
     """Models the broader transactional regime governing sets of related transactions."""
 
     regime_type: Optional[str] = None  # e.g., "Market", "Hierarchical", "Network"
@@ -286,7 +286,7 @@ class TransactionalRegime(Node):
     system_level_effects: Dict[str, float] = field(default_factory=dict)
 
 @dataclass
-class PropertyRights(Node):
+class PropertyRights(Node):  # pylint: disable=too-many-instance-attributes
     """Models property rights structures underlying transactional relationships."""
 
     rights_type: Optional[str] = None  # e.g., "Private", "Common", "Public"

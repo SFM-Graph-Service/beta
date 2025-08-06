@@ -72,7 +72,7 @@ class ConflictOutcome(Enum):
     ESCALATION = auto()             # Conflict escalates further
 
 @dataclass
-class Conflict(Node):
+class Conflict(Node):  # pylint: disable=too-many-instance-attributes
     """Models individual conflicts within institutional systems."""
 
     conflict_type: Optional[ConflictType] = None
@@ -179,10 +179,10 @@ class ResolutionProcess(Node):
     advisors: List[uuid.UUID] = field(default_factory=list)
 
     # Process stages
-    preparation_phase: Dict[str, any] = field(default_factory=dict)
-    exploration_phase: Dict[str, any] = field(default_factory=dict)
-    negotiation_phase: Dict[str, any] = field(default_factory=dict)
-    agreement_phase: Dict[str, any] = field(default_factory=dict)
+    preparation_phase: Dict[str, Any] = field(default_factory=dict)
+    exploration_phase: Dict[str, Any] = field(default_factory=dict)
+    negotiation_phase: Dict[str, Any] = field(default_factory=dict)
+    agreement_phase: Dict[str, Any] = field(default_factory=dict)
 
     # Process characteristics
     process_duration: Optional[timedelta] = None
@@ -218,8 +218,8 @@ class Mediation(ResolutionProcess):
     mediator_neutrality: Optional[float] = None  # 0-1 scale
 
     # Mediation specific elements
-    caucus_sessions: List[Dict[str, any]] = field(default_factory=list)
-    joint_sessions: List[Dict[str, any]] = field(default_factory=list)
+    caucus_sessions: List[Dict[str, Any]] = field(default_factory=list)
+    joint_sessions: List[Dict[str, Any]] = field(default_factory=list)
     reality_testing: List[str] = field(default_factory=list)
     option_generation: List[str] = field(default_factory=list)
 

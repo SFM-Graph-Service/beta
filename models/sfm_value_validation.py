@@ -81,7 +81,7 @@ class ValidationStatus(Enum):
     PENDING = auto()                    # Validation pending
 
 @dataclass
-class ValueAssessment(Node):
+class ValueAssessment(Node):  # pylint: disable=too-many-instance-attributes
     """Assessment of individual values in SFM context."""
 
     value_category: ValueCategory = ValueCategory.SOCIAL
@@ -207,7 +207,7 @@ class ValueAssessment(Node):
         return appropriateness_assessment
 
 @dataclass
-class ValueValidation(Node):
+class ValueValidation(Node):  # pylint: disable=too-many-instance-attributes
     """Systematic validation of value categories and assignments."""
 
     validation_scope: Optional[str] = None
@@ -384,7 +384,7 @@ class ValueValidation(Node):
         return findings
 
 @dataclass
-class ValueConflictAnalysis(Node):
+class ValueConflictAnalysis(Node):  # pylint: disable=too-many-instance-attributes
     """Analysis of conflicts between values in SFM context."""
 
     conflict_analysis_scope: Optional[str] = None

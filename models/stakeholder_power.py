@@ -63,7 +63,7 @@ class PowerDynamic(Enum):
     NEGOTIATION = auto()         # Ongoing negotiation
 
 @dataclass
-class PowerAssessment(Node):
+class PowerAssessment(Node):  # pylint: disable=too-many-instance-attributes
     """Comprehensive power assessment for individual stakeholders."""
 
     stakeholder_id: Optional[uuid.UUID] = None
@@ -122,7 +122,7 @@ class PowerAssessment(Node):
         return sum(p * w for p, w in zip(valid_dimensions, weights)) / sum(weights)
 
 @dataclass
-class InfluenceNetwork(Node):
+class InfluenceNetwork(Node):  # pylint: disable=too-many-instance-attributes
     """Models networks of influence relationships between stakeholders."""
 
     network_name: Optional[str] = None
@@ -165,7 +165,7 @@ class InfluenceNetwork(Node):
     institutional_network_effects: List[str] = field(default_factory=list)
 
 @dataclass
-class StakeholderCoalition(Node):
+class StakeholderCoalition(Node):  # pylint: disable=too-many-instance-attributes
     """Models coalitions formed by stakeholders for collective action."""
 
     coalition_type: Optional[CoalitionType] = None
@@ -215,7 +215,7 @@ class StakeholderCoalition(Node):
     institutional_change_advocacy: List[str] = field(default_factory=list)
 
 @dataclass
-class PowerRelationship(Node):
+class PowerRelationship(Node):  # pylint: disable=too-many-instance-attributes
     """Models individual power relationships between stakeholders."""
 
     power_holder: Optional[uuid.UUID] = None  # Actor with power
@@ -259,7 +259,7 @@ class PowerRelationship(Node):
     institutional_relationship_foundation: List[uuid.UUID] = field(default_factory=list)
 
 @dataclass
-class PowerMap(Node):
+class PowerMap(Node):  # pylint: disable=too-many-instance-attributes
     """Comprehensive mapping of power relationships in a system."""
 
     system_domain: Optional[str] = None  # Domain being mapped
@@ -277,7 +277,7 @@ class PowerMap(Node):
     influence_brokers: List[uuid.UUID] = field(default_factory=list)
 
     # Power dynamics
-    power_shifts: List[Dict[str, any]] = field(default_factory=list)
+    power_shifts: List[Dict[str, Any]] = field(default_factory=list)
     emerging_power_centers: List[uuid.UUID] = field(default_factory=list)
     declining_power_centers: List[uuid.UUID] = field(default_factory=list)
 
@@ -302,7 +302,7 @@ class PowerMap(Node):
     institutional_power_foundation: List[uuid.UUID] = field(default_factory=list)
 
 @dataclass
-class PowerShift(Node):
+class PowerShift(Node):  # pylint: disable=too-many-instance-attributes
     """Models changes in power relationships over time."""
 
     shift_description: Optional[str] = None

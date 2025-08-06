@@ -77,7 +77,7 @@ class ValueConflictType(Enum):
     TRADITIONAL_MODERN = auto()        # Traditional vs. modern values
 
 @dataclass
-class ValueInquiry(Node):
+class ValueInquiry(Node):  # pylint: disable=too-many-instance-attributes
     """Core value inquiry process within instrumentalist framework."""
 
     inquiry_focus: Optional[str] = None  # What is being inquired about
@@ -199,7 +199,7 @@ class ValueInquiry(Node):
         return effectiveness_assessment
 
 @dataclass
-class KnowledgeValidation(Node):
+class KnowledgeValidation(Node):  # pylint: disable=too-many-instance-attributes
     """Knowledge validation process within value inquiry."""
 
     knowledge_claim: Optional[str] = None  # Knowledge being validated
@@ -265,7 +265,7 @@ class KnowledgeValidation(Node):
         return instrumental_validation
 
 @dataclass
-class NormativeEvaluation(Node):
+class NormativeEvaluation(Node):  # pylint: disable=too-many-instance-attributes
     """Normative evaluation within value inquiry framework."""
 
     evaluation_focus: Optional[str] = None  # What is being evaluated
@@ -387,7 +387,7 @@ class NormativeEvaluation(Node):
         return resolution_suggestions[:3]  # Return top 3 suggestions
 
 @dataclass
-class ValueSynthesis(Node):
+class ValueSynthesis(Node):  # pylint: disable=too-many-instance-attributes
     """Synthesis of value inquiry processes and outcomes."""
 
     synthesis_scope: Optional[str] = None  # Scope of synthesis
@@ -424,7 +424,7 @@ class ValueSynthesis(Node):
     institutional_synthesis_alignment: Dict[uuid.UUID, float] = field(default_factory=dict)
 
 @dataclass
-class InstrumentalistInquiryProcess(Node):
+class InstrumentalistInquiryProcess(Node):  # pylint: disable=too-many-instance-attributes
     """Comprehensive instrumentalist inquiry process integrating value inquiry."""
 
     inquiry_purpose: Optional[str] = None  # Overall purpose of inquiry
