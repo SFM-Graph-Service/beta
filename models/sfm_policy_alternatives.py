@@ -97,7 +97,7 @@ class PolicyCertainty(Enum):
     UNCERTAIN = auto()             # Highly uncertain outcomes
 
 @dataclass
-class PolicyAlternative(Node):
+class PolicyAlternative(Node):  # pylint: disable=too-many-instance-attributes
     """Individual policy alternative with comprehensive specification."""
 
     policy_type: Optional[PolicyType] = None

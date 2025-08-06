@@ -79,7 +79,7 @@ class CapacityGap(Enum):
     COMMUNICATION = auto()          # Communication and language skills
 
 @dataclass
-class StakeholderProfile(Node):
+class StakeholderProfile(Node):  # pylint: disable=too-many-instance-attributes
     """Comprehensive profile of individual stakeholder for engagement."""
 
     stakeholder_type: StakeholderType = StakeholderType.COMMUNITY_GROUP

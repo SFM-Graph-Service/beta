@@ -89,7 +89,7 @@ class FeedbackType(Enum):
     OSCILLATING = auto()             # Oscillating feedback patterns
 
 @dataclass
-class ImpactRelationship(Node):
+class ImpactRelationship(Node):  # pylint: disable=too-many-instance-attributes
     """Individual impact relationship between SFM elements."""
 
     source_element_id: uuid.UUID

@@ -72,7 +72,7 @@ class ValueIntegrationApproach(Enum):
     TRADE_OFF = auto()        # Explicit trade-offs
 
 @dataclass
-class ValueDimension(Node):
+class ValueDimension(Node):  # pylint: disable=too-many-instance-attributes
     """Individual value dimension within a value system."""
 
     value_category: ValueCategory = ValueCategory.SOCIAL
@@ -171,7 +171,7 @@ class ValueDimension(Node):
         return realization_assessment
 
 @dataclass
-class ValueHierarchy(Node):
+class ValueHierarchy(Node):  # pylint: disable=too-many-instance-attributes
     """Structured value prioritization within a value system."""
 
     hierarchy_type: str = "priority_based"  # priority_based, lexicographic, weighted
@@ -269,7 +269,7 @@ class ValueHierarchy(Node):
         return decision_guidance
 
 @dataclass
-class ValueConflictAnalysis(Node):
+class ValueConflictAnalysis(Node):  # pylint: disable=too-many-instance-attributes
     """Analysis of conflicts between competing values."""
 
     conflict_intensity: ValueConflictIntensity = ValueConflictIntensity.MODERATE
@@ -403,7 +403,7 @@ class ValueConflictAnalysis(Node):
         return resolution_plan
 
 @dataclass
-class ValueIntegration(Node):
+class ValueIntegration(Node):  # pylint: disable=too-many-instance-attributes
     """Synthesis and integration of multiple value perspectives."""
 
     integration_approach: ValueIntegrationApproach = ValueIntegrationApproach.BALANCED
@@ -477,7 +477,7 @@ class ValueIntegration(Node):
         return synthesis_results
 
 @dataclass
-class SocialValueSystem(Node):
+class SocialValueSystem(Node):  # pylint: disable=too-many-instance-attributes
     """Comprehensive social value system following Hayden's value theory."""
 
     value_system_type: ValueSystemType = ValueSystemType.INSTRUMENTAL_PROBLEM_SOLVING
@@ -626,7 +626,7 @@ class SocialValueSystem(Node):
         return implementation_plan
 
 @dataclass
-class SocialValueAssessment(Node):
+class SocialValueAssessment(Node):  # pylint: disable=too-many-instance-attributes
     """Systematic assessment of social value systems and their impacts."""
 
     assessment_scope: Optional[str] = None

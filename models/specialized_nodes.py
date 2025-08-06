@@ -45,7 +45,7 @@ from models.sfm_enums import (
 )
 
 @dataclass
-class SystemProperty(Node):
+class SystemProperty(Node):  # pylint: disable=too-many-instance-attributes
     """Represents a system-level property or metric of the SFM."""
 
     property_type: SystemPropertyType = SystemPropertyType.STRUCTURAL
@@ -77,11 +77,11 @@ class PolicyInstrument(Node):
             )
 
 @dataclass
-class MatrixCell(Node):
-    """Represents a cell in the Social Fabric Matrix showing institution-criteria relationship with enhanced SFM integration."""
+class MatrixCell(Node):  # pylint: disable=too-many-instance-attributes
+    """Represents a cell in the Social Fabric Matrix showing institution-criteria relationship with enhanced SFM integration."""  # pylint: disable=line-too-long
 
-    institution_id: Optional[uuid.UUID] = None  # Made optional with default to fix dataclass ordering
-    criteria_id: Optional[uuid.UUID] = None     # Made optional with default to fix dataclass ordering
+    institution_id: Optional[uuid.UUID] = None  # Made optional with default to fix dataclass ordering  # pylint: disable=line-too-long
+    criteria_id: Optional[uuid.UUID] = None     # Made optional with default to fix dataclass ordering  # pylint: disable=line-too-long
     correlation_type: CorrelationType = CorrelationType.UNKNOWN
     correlation_strength: Optional[float] = None  # 0-1 scale
     correlation_scale: CorrelationScale = CorrelationScale.NEUTRAL  # Hayden's standardized -3 to +3 scale
@@ -443,7 +443,7 @@ class MatrixCell(Node):
         return indicator_analysis
 
 @dataclass
-class SFMCriteria(Node):
+class SFMCriteria(Node):  # pylint: disable=too-many-instance-attributes
     """Evaluation criteria used in the Social Fabric Matrix with Hayden's priority system."""
 
     criteria_type: CriteriaType = CriteriaType.SOCIAL
@@ -824,7 +824,7 @@ class CrossImpactAnalysis(Node):
             raise ValueError("primary_cell_id is required for CrossImpactAnalysis")
 
 @dataclass
-class SFMMatrix(Node):
+class SFMMatrix(Node):  # pylint: disable=too-many-instance-attributes
     """Represents a complete Social Fabric Matrix configuration."""
 
     institutions: List[uuid.UUID] = field(default_factory=lambda: [])  # Row headers
@@ -1038,7 +1038,7 @@ class ValueSystem(Node):
         return min(1.0, support_count * 0.2)  # Cap at 1.0
 
 @dataclass
-class InstitutionalHolarchy(Node):
+class InstitutionalHolarchy(Node):  # pylint: disable=too-many-instance-attributes
     """Represents nested levels of institutional arrangements per Hayden's framework."""
 
     institutional_levels: Dict[InstitutionalLevel, List[uuid.UUID]] = field(default_factory=lambda: {})
@@ -1546,7 +1546,7 @@ class SystemBoundary(Node):
         return risks
 
 @dataclass
-class ProvisioningProcess(Node):
+class ProvisioningProcess(Node):  # pylint: disable=too-many-instance-attributes
     """Models the societal provisioning process in Hayden's SFM framework."""
 
     provisioning_stages: Dict[ProvisioningStage, List[uuid.UUID]] = field(default_factory=lambda: {})  # Stages and involved institutions

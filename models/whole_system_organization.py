@@ -60,7 +60,7 @@ class SubSystemType(Enum):
     SOCIAL_SUBSYSTEM = auto()         # Social networks and relationships
 
 @dataclass
-class SystemBoundary(Node):
+class SystemBoundary(Node):  # pylint: disable=too-many-instance-attributes
     """Defines the boundaries of the whole system organization."""
 
     boundary_type: SystemBoundaryType = SystemBoundaryType.CONCEPTUAL_BOUNDARY
@@ -189,7 +189,7 @@ class SystemBoundary(Node):
         return base_permeability
 
 @dataclass
-class SubSystemComponent(Node):
+class SubSystemComponent(Node):  # pylint: disable=too-many-instance-attributes
     """Individual subsystem within the whole system organization."""
 
     subsystem_type: SubSystemType = SubSystemType.INSTITUTIONAL_SUBSYSTEM
@@ -297,7 +297,7 @@ class SubSystemComponent(Node):
         return opportunities
 
 @dataclass
-class WholeSystemOrganization(Node):
+class WholeSystemOrganization(Node):  # pylint: disable=too-many-instance-attributes
     """The complete system being analyzed in the Social Fabric Matrix framework."""
 
     system_level: SystemLevel = SystemLevel.ORGANIZATIONAL
@@ -575,7 +575,7 @@ class WholeSystemOrganization(Node):
 
             system_report['integration_metrics'] = {
                 'average_integration': sum(integration_scores) / len(integration_scores),
-                'integration_variance': sum((score - sum(integration_scores) / len(integration_scores)) ** 2
+                'integration_variance': sum((score - sum(integration_scores) / len(integration_scores)) ** 2  # pylint: disable=line-too-long
                                           for score in integration_scores) / len(integration_scores),
                 'highly_integrated_subsystems': sum(1 for score in integration_scores if score > 0.7),
                 'poorly_integrated_subsystems': sum(1 for score in integration_scores if score < 0.3)

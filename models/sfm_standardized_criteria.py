@@ -72,7 +72,7 @@ class CriteriaMeasurementDimension(Enum):
     SUSTAINABILITY = auto()   # Long-term viability
 
 @dataclass
-class HaydenStandardCriteria(Node):
+class HaydenStandardCriteria(Node):  # pylint: disable=too-many-instance-attributes
     """Implementation of Hayden's standardized criteria for SFM analysis."""
 
     criteria_category: Optional[HaydenCriteriaCategory] = None

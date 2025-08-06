@@ -86,7 +86,7 @@ class IdentificationMethod(Enum):
     MIXED_METHODS = auto()            # Combined identification approaches
 
 @dataclass
-class DeliverySystemIdentification(Node):
+class DeliverySystemIdentification(Node):  # pylint: disable=too-many-instance-attributes
     """Systematic identification of delivery systems."""
 
     identification_scope: Optional[str] = None
