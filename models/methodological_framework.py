@@ -137,67 +137,90 @@ class NormativeSystemsAnalysis(Node):
             "normative_recommendations": []
         }
 
-        # Calculate overall system score
-        if self.system_evaluation:
-            weighted_scores: List[float] = []
-            for component, score in self.system_evaluation.items():
-                weight = self.value_hierarchy.get(component, 1.0)
-                weighted_scores.append(score * weight)
-
-            if weighted_scores:
-                evaluation_results["overall_system_score"] = sum(weighted_scores) / len(weighted_scores)
-
-        # Assess value alignment
-        alignment_factors: List[float] = []
-        if self.life_process_enhancement is not None:
-            alignment_factors.append(self.life_process_enhancement)
-        if self.democratic_values is not None:
-            alignment_factors.append(self.democratic_values)
-        if self.sustainability_priority is not None:
-            alignment_factors.append(self.sustainability_priority)
-        if self.equity_considerations is not None:
-            alignment_factors.append(self.equity_considerations)
-
-        if alignment_factors:
-            avg_alignment = sum(alignment_factors) / len(alignment_factors)
-            if avg_alignment >= 0.8:
-                evaluation_results["value_alignment"] = "strong"
-            elif avg_alignment >= 0.6:
-                evaluation_results["value_alignment"] = "moderate"
-            else:
-                evaluation_results["value_alignment"] = "weak"
-
-        # Identify policy priority areas
-        for component, score in self.system_evaluation.items():
-            if score < 0.6:  # Below threshold
-                evaluation_results["policy_priority_areas"].append(component)
-
-        # Calculate stakeholder consensus level
-        if self.stakeholder_values:
-            consensus_scores: List[float] = []
-            for value_type in self.value_hierarchy.keys():
-                stakeholder_scores = [
-                    stakeholder_vals.get(value_type, 0.0)
-                    for stakeholder_vals in self.stakeholder_values.values()
-                ]
-                if len(stakeholder_scores) > 1:
-                    # Calculate variance as inverse measure of consensus
-                    mean_score = sum(stakeholder_scores) / len(stakeholder_scores)
-                    variance = sum((s - mean_score)**2 for s in stakeholder_scores) / len(stakeholder_scores)
-                    consensus_scores.append(max(0.0, 1.0 - variance))
-
-            if consensus_scores:
-                evaluation_results["stakeholder_consensus_level"] = sum(consensus_scores) / len(consensus_scores)
-
-        # Generate normative recommendations
-        if evaluation_results["overall_system_score"] < 0.7:
-            evaluation_results["normative_recommendations"].append("System requires significant normative improvements")
-        if evaluation_results["value_alignment"] == "weak":
-            evaluation_results["normative_recommendations"].append("Strengthen alignment with core values")
-        if evaluation_results["stakeholder_consensus_level"] < 0.6:
-            evaluation_results["normative_recommendations"].append("Build greater stakeholder consensus")
+        # Calculate component scores
+        evaluation_results["overall_system_score"] = self._calculate_overall_system_score()
+        evaluation_results["value_alignment"] = self._assess_value_alignment()
+        evaluation_results["policy_priority_areas"] = self._identify_policy_priorities()
+        evaluation_results["stakeholder_consensus_level"] = self._calculate_stakeholder_consensus()
+        evaluation_results["normative_recommendations"] = self._generate_normative_recommendations(
+            evaluation_results)
 
         return evaluation_results
+
+    def _calculate_overall_system_score(self) -> float:
+        """Calculate weighted overall system score."""
+        if not self.system_evaluation:
+            return 0.0
+
+        weighted_scores: List[float] = []
+        for component, score in self.system_evaluation.items():
+            weight = self.value_hierarchy.get(component, 1.0)
+            weighted_scores.append(score * weight)
+
+        return sum(weighted_scores) / len(weighted_scores) if weighted_scores else 0.0
+
+    def _assess_value_alignment(self) -> str:
+        """Assess alignment with core values."""
+        alignment_factors: List[float] = []
+        
+        value_factors = [
+            self.life_process_enhancement,
+            self.democratic_values,
+            self.sustainability_priority,
+            self.equity_considerations
+        ]
+        
+        alignment_factors = [factor for factor in value_factors if factor is not None]
+        
+        if not alignment_factors:
+            return "unknown"
+
+        avg_alignment = sum(alignment_factors) / len(alignment_factors)
+        if avg_alignment >= 0.8:
+            return "strong"
+        elif avg_alignment >= 0.6:
+            return "moderate"
+        else:
+            return "weak"
+
+    def _identify_policy_priorities(self) -> List[str]:
+        """Identify components needing policy attention."""
+        return [
+            component for component, score in self.system_evaluation.items()
+            if score < 0.6
+        ]
+
+    def _calculate_stakeholder_consensus(self) -> float:
+        """Calculate level of stakeholder consensus."""
+        if not self.stakeholder_values:
+            return 0.0
+
+        consensus_scores: List[float] = []
+        for value_type in self.value_hierarchy.keys():
+            stakeholder_scores = [
+                stakeholder_vals.get(value_type, 0.0)
+                for stakeholder_vals in self.stakeholder_values.values()
+            ]
+            if len(stakeholder_scores) > 1:
+                # Calculate variance as inverse measure of consensus
+                mean_score = sum(stakeholder_scores) / len(stakeholder_scores)
+                variance = sum((s - mean_score)**2 for s in stakeholder_scores) / len(stakeholder_scores)
+                consensus_scores.append(max(0.0, 1.0 - variance))
+
+        return sum(consensus_scores) / len(consensus_scores) if consensus_scores else 0.0
+
+    def _generate_normative_recommendations(self, evaluation_results: Dict[str, Any]) -> List[str]:
+        """Generate actionable normative recommendations."""
+        recommendations = []
+        
+        if evaluation_results["overall_system_score"] < 0.7:
+            recommendations.append("System requires significant normative improvements")
+        if evaluation_results["value_alignment"] == "weak":
+            recommendations.append("Strengthen alignment with core values")
+        if evaluation_results["stakeholder_consensus_level"] < 0.6:
+            recommendations.append("Build greater stakeholder consensus")
+
+        return recommendations
 
 
 @dataclass
@@ -241,8 +264,19 @@ class PolicyRelevanceIntegration(Node):
             "strategic_recommendations": []
         }
 
-        # Calculate overall integration capacity
+        # Calculate component assessments
+        integration_assessment["overall_integration_capacity"] = self._calculate_integration_capacity()
+        integration_assessment["political_viability"] = self._assess_political_viability()
+        integration_assessment["implementation_readiness"] = self._assess_implementation_readiness()
+        integration_assessment["stakeholder_alignment"] = self._assess_stakeholder_alignment()
+        integration_assessment["strategic_recommendations"] = self._generate_strategic_recommendations()
+
+        return integration_assessment
+
+    def _calculate_integration_capacity(self) -> float:
+        """Calculate overall integration capacity score."""
         capacity_factors: List[float] = []
+        
         if self.political_feasibility is not None:
             capacity_factors.append(self.political_feasibility * 0.3)
         if self.implementation_capacity is not None:
@@ -250,48 +284,65 @@ class PolicyRelevanceIntegration(Node):
         if self.stakeholder_support is not None:
             capacity_factors.append(self.stakeholder_support * 0.4)
 
-        if capacity_factors:
-            integration_assessment["overall_integration_capacity"] = sum(capacity_factors)
+        return sum(capacity_factors) if capacity_factors else 0.0
 
-        # Assess political viability
-        if self.political_feasibility is not None:
-            if self.political_feasibility >= 0.7:
-                integration_assessment["political_viability"] = "high"
-            elif self.political_feasibility >= 0.4:
-                integration_assessment["political_viability"] = "moderate"
-            else:
-                integration_assessment["political_viability"] = "low"
-                integration_assessment["strategic_recommendations"].append("Build political support")
+    def _assess_political_viability(self) -> str:
+        """Assess political viability level."""
+        if self.political_feasibility is None:
+            return "unknown"
+        
+        if self.political_feasibility >= 0.7:
+            return "high"
+        elif self.political_feasibility >= 0.4:
+            return "moderate"
+        else:
+            return "low"
 
-        # Assess implementation readiness
-        if self.implementation_capacity is not None:
-            if self.implementation_capacity >= 0.7:
-                integration_assessment["implementation_readiness"] = "high"
-            elif self.implementation_capacity >= 0.4:
-                integration_assessment["implementation_readiness"] = "moderate"
-            else:
-                integration_assessment["implementation_readiness"] = "low"
-                integration_assessment["strategic_recommendations"].append("Strengthen implementation capacity")
+    def _assess_implementation_readiness(self) -> str:
+        """Assess implementation readiness level."""
+        if self.implementation_capacity is None:
+            return "unknown"
+        
+        if self.implementation_capacity >= 0.7:
+            return "high"
+        elif self.implementation_capacity >= 0.4:
+            return "moderate"
+        else:
+            return "low"
 
-        # Assess stakeholder alignment
-        if self.stakeholder_support is not None:
-            if self.stakeholder_support >= 0.7:
-                integration_assessment["stakeholder_alignment"] = "strong"
-            elif self.stakeholder_support >= 0.4:
-                integration_assessment["stakeholder_alignment"] = "moderate"
-            else:
-                integration_assessment["stakeholder_alignment"] = "weak"
-                integration_assessment["strategic_recommendations"].append("Build stakeholder coalitions")
+    def _assess_stakeholder_alignment(self) -> str:
+        """Assess stakeholder alignment level."""
+        if self.stakeholder_support is None:
+            return "unknown"
+        
+        if self.stakeholder_support >= 0.7:
+            return "strong"
+        elif self.stakeholder_support >= 0.4:
+            return "moderate"
+        else:
+            return "weak"
 
-        # Additional strategic recommendations
+    def _generate_strategic_recommendations(self) -> List[str]:
+        """Generate strategic recommendations based on assessment."""
+        recommendations = []
+        
+        # Check individual factors
+        if self.political_feasibility is not None and self.political_feasibility < 0.4:
+            recommendations.append("Build political support")
+        if self.implementation_capacity is not None and self.implementation_capacity < 0.4:
+            recommendations.append("Strengthen implementation capacity")
+        if self.stakeholder_support is not None and self.stakeholder_support < 0.4:
+            recommendations.append("Build stakeholder coalitions")
+        
+        # Check system capabilities
         if len(self.policy_instruments) < 3:
-            integration_assessment["strategic_recommendations"].append("Expand policy instrument toolkit")
+            recommendations.append("Expand policy instrument toolkit")
         if len(self.coalition_building_opportunities) < 2:
-            integration_assessment["strategic_recommendations"].append("Identify coalition opportunities")
+            recommendations.append("Identify coalition opportunities")
         if self.adaptive_management is not None and self.adaptive_management < 0.6:
-            integration_assessment["strategic_recommendations"].append("Enhance adaptive management capacity")
+            recommendations.append("Enhance adaptive management capacity")
 
-        return integration_assessment
+        return recommendations
 
 
 @dataclass

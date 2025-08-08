@@ -398,70 +398,103 @@ class InstitutionalAdjustment(Node):
             'success_factors': []
         }
 
+        # Calculate individual feasibility dimensions
         feasibility_scores = []
-
-        # Resource feasibility
-        if self.required_resources and self.allocated_resources:
-            resource_coverage = []
-            for resource_type, required in self.required_resources.items():
-                allocated = self.allocated_resources.get(resource_type, 0.0)
-                if required > 0:
-                    coverage = min(allocated / required, 1.0)
-                    resource_coverage.append(coverage)
-
-            if resource_coverage:
-                resource_feasibility = sum(resource_coverage) / len(resource_coverage)
-                feasibility_assessment['resource_feasibility'] = resource_feasibility
-                feasibility_scores.append(resource_feasibility)
-
-        # Stakeholder feasibility
-        total_stakeholders = len(self.affected_stakeholders)
-        champions = len(self.adjustment_champions)
-        if total_stakeholders > 0:
-            stakeholder_support = champions / total_stakeholders
-            feasibility_assessment['stakeholder_feasibility'] = stakeholder_support
-            feasibility_scores.append(stakeholder_support)
-
-        # Resistance feasibility
-        if self.resistance_analysis:
-            resistance_risk = self.resistance_analysis.calculate_resistance_risk()
-            resistance_feasibility = 1.0 - resistance_risk
+        
+        resource_feasibility = self._assess_resource_feasibility()
+        if resource_feasibility is not None:
+            feasibility_assessment['resource_feasibility'] = resource_feasibility
+            feasibility_scores.append(resource_feasibility)
+        
+        stakeholder_feasibility = self._assess_stakeholder_feasibility()
+        if stakeholder_feasibility is not None:
+            feasibility_assessment['stakeholder_feasibility'] = stakeholder_feasibility
+            feasibility_scores.append(stakeholder_feasibility)
+        
+        resistance_feasibility = self._assess_resistance_feasibility()
+        if resistance_feasibility is not None:
             feasibility_assessment['resistance_feasibility'] = resistance_feasibility
             feasibility_scores.append(resistance_feasibility)
+        
+        timeline_feasibility = self._assess_timeline_feasibility()
+        if timeline_feasibility is not None:
+            feasibility_assessment['timeline_feasibility'] = timeline_feasibility
+            feasibility_scores.append(timeline_feasibility)
 
-        # Timeline feasibility
-        if self.start_date and self.target_completion:
-            elapsed = datetime.now() - self.start_date
-            total_time = self.target_completion - self.start_date
-
-            if total_time.total_seconds() > 0:
-                time_progress = elapsed.total_seconds() / total_time.total_seconds()
-                stage_progress = self.calculate_adjustment_progress()
-
-                # Good if stage progress matches or exceeds time progress
-                timeline_feasibility = min(stage_progress / max(time_progress, 0.1), 1.0)
-                feasibility_assessment['timeline_feasibility'] = timeline_feasibility
-                feasibility_scores.append(timeline_feasibility)
-
-        # Overall feasibility
+        # Calculate overall feasibility
         if feasibility_scores:
-            overall_feasibility = sum(feasibility_scores) / len(feasibility_scores)
-            feasibility_assessment['overall_feasibility'] = overall_feasibility
+            feasibility_assessment['overall_feasibility'] = sum(feasibility_scores) / len(feasibility_scores)
 
         # Identify risk and success factors
-        if feasibility_assessment['resource_feasibility'] < 0.5:
-            feasibility_assessment['risk_factors'].append('Insufficient resource allocation')
-
-        if feasibility_assessment['resistance_feasibility'] < 0.5:
-            feasibility_assessment['risk_factors'].append('High resistance to change')
-
-        if len(self.adjustment_champions) > 2:
-            feasibility_assessment['success_factors'].append('Strong champion support')
-
-        if len(self.capability_gaps) == 0:
-            feasibility_assessment['success_factors'].append('Adequate capabilities available')
+        self._identify_risk_factors(feasibility_assessment)
+        self._identify_success_factors(feasibility_assessment)
 
         return feasibility_assessment
+
+    def _assess_resource_feasibility(self) -> Optional[float]:
+        """Assess resource availability feasibility."""
+        if not self.required_resources or not self.allocated_resources:
+            return None
+
+        resource_coverage = []
+        for resource_type, required in self.required_resources.items():
+            allocated = self.allocated_resources.get(resource_type, 0.0)
+            if required > 0:
+                coverage = min(allocated / required, 1.0)
+                resource_coverage.append(coverage)
+
+        return sum(resource_coverage) / len(resource_coverage) if resource_coverage else None
+
+    def _assess_stakeholder_feasibility(self) -> Optional[float]:
+        """Assess stakeholder support feasibility."""
+        total_stakeholders = len(self.affected_stakeholders)
+        champions = len(self.adjustment_champions)
+        
+        if total_stakeholders == 0:
+            return None
+        
+        return champions / total_stakeholders
+
+    def _assess_resistance_feasibility(self) -> Optional[float]:
+        """Assess resistance to change feasibility."""
+        if not self.resistance_analysis:
+            return None
+        
+        resistance_risk = self.resistance_analysis.calculate_resistance_risk()
+        return 1.0 - resistance_risk
+
+    def _assess_timeline_feasibility(self) -> Optional[float]:
+        """Assess timeline feasibility based on progress."""
+        if not self.start_date or not self.target_completion:
+            return None
+
+        elapsed = datetime.now() - self.start_date
+        total_time = self.target_completion - self.start_date
+
+        if total_time.total_seconds() <= 0:
+            return None
+
+        time_progress = elapsed.total_seconds() / total_time.total_seconds()
+        stage_progress = self.calculate_adjustment_progress()
+
+        # Good if stage progress matches or exceeds time progress
+        return min(stage_progress / max(time_progress, 0.1), 1.0)
+
+    def _identify_risk_factors(self, assessment: Dict[str, Any]) -> None:
+        """Identify risk factors affecting feasibility."""
+        if assessment['resource_feasibility'] < 0.5:
+            assessment['risk_factors'].append('Insufficient resource allocation')
+
+        if assessment['resistance_feasibility'] < 0.5:
+            assessment['risk_factors'].append('High resistance to change')
+
+    def _identify_success_factors(self, assessment: Dict[str, Any]) -> None:
+        """Identify success factors supporting feasibility."""
+        if len(self.adjustment_champions) > 2:
+            assessment['success_factors'].append('Strong champion support')
+
+        if len(self.capability_gaps) == 0:
+            assessment['success_factors'].append('Adequate capabilities available')
 
     def evaluate_adjustment_outcomes(self) -> Dict[str, Any]:
         """Evaluate outcomes of the adjustment process."""

@@ -202,16 +202,32 @@ class EvaluationCriterion(Node):
             'improvement_recommendations': []
         }
 
-        # Content validity assessment
-        if self.criterion_description and self.measurement_definition:
-            validation_results['content_validity'] = 0.8
-        elif self.criterion_description or self.measurement_definition:
-            validation_results['content_validity'] = 0.5
-        else:
-            validation_results['content_validity'] = 0.2
-            validation_results['quality_issues'].append('Missing criterion or measurement definition')
+        # Assess individual quality dimensions
+        validation_results['content_validity'] = self._assess_content_validity(validation_results['quality_issues'])
+        validation_results['measurement_validity'] = self._assess_measurement_validity()
+        validation_results['reliability_assessment'] = self._assess_reliability(validation_results['quality_issues'])
+        validation_results['practical_utility'] = self._assess_practical_utility()
 
-        # Measurement validity
+        # Calculate overall quality
+        validation_results['overall_quality'] = self._calculate_overall_quality(validation_results)
+        
+        # Generate improvement recommendations
+        validation_results['improvement_recommendations'] = self._generate_quality_recommendations(validation_results)
+
+        return validation_results
+
+    def _assess_content_validity(self, quality_issues: List[str]) -> float:
+        """Assess content validity of the criterion."""
+        if self.criterion_description and self.measurement_definition:
+            return 0.8
+        elif self.criterion_description or self.measurement_definition:
+            return 0.5
+        else:
+            quality_issues.append('Missing criterion or measurement definition')
+            return 0.2
+
+    def _assess_measurement_validity(self) -> float:
+        """Assess measurement validity of the criterion."""
         validity_score = 0.0
         if self.measurement_approach and self.measurement_unit:
             validity_score += 0.4
@@ -219,18 +235,20 @@ class EvaluationCriterion(Node):
             validity_score += 0.3
         if self.benchmark_scores:
             validity_score += 0.3
-        validation_results['measurement_validity'] = min(validity_score, 1.0)
+        return min(validity_score, 1.0)
 
-        # Reliability assessment
+    def _assess_reliability(self, quality_issues: List[str]) -> float:
+        """Assess reliability of the criterion."""
         if self.measurement_reliability is not None:
-            validation_results['reliability_assessment'] = self.measurement_reliability
+            return self.measurement_reliability
         elif self.inter_rater_reliability is not None:
-            validation_results['reliability_assessment'] = self.inter_rater_reliability
+            return self.inter_rater_reliability
         else:
-            validation_results['reliability_assessment'] = 0.3  # Unknown reliability
-            validation_results['quality_issues'].append('Reliability not assessed')
+            quality_issues.append('Reliability not assessed')
+            return 0.3  # Unknown reliability
 
-        # Practical utility
+    def _assess_practical_utility(self) -> float:
+        """Assess practical utility of the criterion."""
         utility_factors = []
         if self.applicable_contexts:
             utility_factors.append(0.3)
@@ -238,26 +256,30 @@ class EvaluationCriterion(Node):
             utility_factors.append(0.4)
         if self.supporting_indicators:
             utility_factors.append(0.3)
-        validation_results['practical_utility'] = sum(utility_factors)
+        return sum(utility_factors)
 
-        # Overall quality assessment
+    def _calculate_overall_quality(self, validation_results: Dict[str, Any]) -> float:
+        """Calculate overall quality score."""
         quality_components = [
             validation_results['content_validity'],
             validation_results['measurement_validity'],
             validation_results['reliability_assessment'],
             validation_results['practical_utility']
         ]
-        validation_results['overall_quality'] = sum(quality_components) / len(quality_components)
+        return sum(quality_components) / len(quality_components)
 
-        # Generate improvement recommendations
+    def _generate_quality_recommendations(self, validation_results: Dict[str, Any]) -> List[str]:
+        """Generate improvement recommendations based on assessment."""
+        recommendations = []
+        
         if validation_results['content_validity'] < 0.7:
-            validation_results['improvement_recommendations'].append('Improve criterion definition and clarity')
+            recommendations.append('Improve criterion definition and clarity')
         if validation_results['measurement_validity'] < 0.6:
-            validation_results['improvement_recommendations'].append('Strengthen measurement approach and standards')
+            recommendations.append('Strengthen measurement approach and standards')
         if validation_results['reliability_assessment'] < 0.7:
-            validation_results['improvement_recommendations'].append('Conduct reliability assessment')
+            recommendations.append('Conduct reliability assessment')
 
-        return validation_results
+        return recommendations
 
 @dataclass
 class CriteriaApplication(Node):
