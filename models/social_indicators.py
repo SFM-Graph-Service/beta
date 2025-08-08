@@ -20,9 +20,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Any, Union, Tuple
 from datetime import datetime, timedelta
-from enum import Enum, auto
 import statistics
-import math
 
 from models.base_nodes import Node
 from models.meta_entities import TimeSlice, SpatialUnit, Scenario
@@ -40,7 +38,6 @@ from models.statistical_analysis import (
     TrendDirection,
     StatisticalAnalysisTools,
     IndicatorAnalyzer,
-    MatrixStatisticalAnalyzer,
 )
 
 
@@ -772,10 +769,6 @@ class IndicatorDatabase(Node):
 
         return recommendations
 
-    # Matrix Analysis Capabilities
-    matrix_completeness_scores: Dict[uuid.UUID, float] = field(default_factory=dict)  # Cell -> completeness  # type: ignore[misc]
-    cross_matrix_relationships: Dict[str, List[uuid.UUID]] = field(default_factory=dict)  # Relationship type -> Indicators  # type: ignore[misc]
-
     def add_indicator(self, indicator: SocialIndicator, group: Optional[str] = None) -> None:
         """Add an indicator to the database."""
         self.indicators[indicator.id] = indicator
@@ -1127,6 +1120,13 @@ class StatisticalAnalysisPipeline(Node):
     validation_results: Dict[str, bool] = field(default_factory=dict)  # type: ignore[misc]
     anomaly_detection_results: List[Dict[str, Any]] = field(default_factory=list)  # type: ignore[misc]
 
+    # Matrix Analysis Capabilities - moved from misplaced location
+    matrix_completeness_scores: Dict[uuid.UUID, float] = field(default_factory=dict)  # type: ignore[misc]
+    cross_matrix_relationships: Dict[str, List[uuid.UUID]] = field(default_factory=dict)  # type: ignore[misc]
+
+    # Overall feedback loop coverage
+    matrix_feedback_coverage: Optional[float] = None
+
     def execute_comprehensive_statistical_analysis(self,
                                                  indicator_database: IndicatorDatabase) -> Dict[str, Any]:  # type: ignore[misc]
         """Execute comprehensive statistical analysis pipeline."""
@@ -1143,9 +1143,6 @@ class StatisticalAnalysisPipeline(Node):
 
         self.statistical_results = analysis_results
         return analysis_results
-
-    # Overall feedback loop coverage
-    matrix_feedback_coverage: Optional[float] = None
 
 @dataclass
 class StatisticalAnalyzer:
@@ -1166,7 +1163,7 @@ class StatisticalAnalyzer:
         """Analyze correlations between indicators."""
         if self.database is None:
             return {}
-        
+
         return self.analyzer.analyze_indicator_correlations(
             self.database, indicator_ids, time_period)
 
@@ -1185,7 +1182,7 @@ class StatisticalAnalyzer:
         """Create a composite indicator from multiple component indicators."""
         if self.database is None:
             raise ValueError("Database not available for composite indicator creation")
-            
+
         return self.analyzer.create_composite_indicator(
             self.database, component_indicators, weights, aggregation_method)
 
@@ -1193,15 +1190,15 @@ class StatisticalAnalyzer:
 class IndicatorDashboard(Node):
     """Visualization and monitoring system for social indicators."""
 
+    # Database reference - placed first to maintain proper dataclass field ordering
+    database: Optional[IndicatorDatabase] = None
+
     # Dashboard state
     monitored_indicators: List[uuid.UUID] = field(default_factory=list)  # type: ignore[misc]
     alert_thresholds: Dict[uuid.UUID, Dict[str, float]] = field(default_factory=dict)  # type: ignore[misc]
     active_alerts: List[Dict[str, Any]] = field(default_factory=list)  # type: ignore[misc]
     last_refresh: Optional[datetime] = None
     refresh_frequency: timedelta = timedelta(hours=1)
-    
-    # Database reference - making it optional to fix dataclass field ordering
-    database: Optional[IndicatorDatabase] = None
 
     def add_monitored_indicator(self, indicator_id: uuid.UUID,
                                thresholds: Optional[Dict[str, float]] = None) -> None:
@@ -1215,7 +1212,7 @@ class IndicatorDashboard(Node):
     def check_alerts(self) -> List[Dict[str, Any]]:  # type: ignore[misc]
         """Check for alert conditions across monitored indicators."""
         alerts = []
-        
+
         if self.database is None:
             return alerts
 
