@@ -331,7 +331,7 @@ class CriteriaApplication(Node):
 
         # Update rankings
         self.entity_rankings = sorted(
-            [(entity_id, score) for entity_id, score in aggregated_results.items()],
+            list(aggregated_results.items()),
             key=lambda x: x[1],
             reverse=True
         )
@@ -622,7 +622,7 @@ class MultiCriteriaAnalysis(Node):
         # Use Borda count method for consensus
         alternative_scores = {alt: 0 for alt in self.alternatives}
 
-        for method, ranking in method_rankings.items():
+        for ranking in method_rankings.values():
             for i, alternative in enumerate(ranking):
                 # Higher rank = higher score
                 score = len(ranking) - i
