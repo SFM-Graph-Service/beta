@@ -516,7 +516,7 @@ class NetworkAnalyzer:
         dependencies = {}
 
         for node_id, node in self.digraph.nodes.items():
-            if node.node_type == DigraphNodeType.INTERMEDIATE  # type: ignore[misc]:
+            if node.node_type == DigraphNodeType.INTERMEDIATE:  # type: ignore[misc]
                 # Find what this institution depends on
                 incoming_edges = [
                     edge for edge in self.digraph.edges.values()
