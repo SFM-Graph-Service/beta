@@ -9,7 +9,7 @@ advanced scenario planning frameworks.
 from __future__ import annotations
 import uuid
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Union, Any, Tuple
+from typing import Dict, List, Optional, Any, Tuple
 from datetime import datetime, timedelta
 from enum import Enum, auto
 

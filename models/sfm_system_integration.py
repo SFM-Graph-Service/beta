@@ -18,17 +18,14 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any, Set, Tuple, Union
-from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Any, Tuple
+from datetime import datetime
 from enum import Enum, auto
 
 from models.base_nodes import Node
 from models.sfm_enums import (
-    SystemLevel,
     ValidationMethod,
-    EvidenceQuality,
     AnalyticalMethod,
-    MatrixConstructionStage,
 )
 
 class IntegrationType(Enum):

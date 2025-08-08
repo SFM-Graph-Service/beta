@@ -18,20 +18,18 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Set, Any, Tuple, Union
+from typing import Dict, List, Optional, Any, Tuple
 from datetime import datetime, timedelta
 from enum import Enum, auto
 import statistics
 
 from models.base_nodes import Node
-from models.meta_entities import TimeSlice, SpatialUnit, Scenario
+from models.meta_entities import TimeSlice, SpatialUnit
 from models.sfm_enums import (
     ValueCategory,
     SocialFabricIndicatorType,
-    IndicatorType,
     MeasurementApproach,
     EvidenceQuality,
-    SystemLevel,
     StatisticalMethod,
     ValidationMethod,
 )
