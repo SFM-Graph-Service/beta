@@ -34,28 +34,15 @@ from models.sfm_enums import (
     EvidenceQuality,
     MeasurementApproach,
 )
+# Import statistical analysis tools
+from models.statistical_analysis import (
+    AggregationMethod,
+    TrendDirection,
+    StatisticalAnalysisTools,
+    IndicatorAnalyzer,
+    MatrixStatisticalAnalyzer,
+)
 
-class AggregationMethod(Enum):
-    """Methods for aggregating indicator data."""
-
-    MEAN = auto()
-    MEDIAN = auto()
-    SUM = auto()
-    WEIGHTED_AVERAGE = auto()
-    GEOMETRIC_MEAN = auto()
-    HARMONIC_MEAN = auto()
-    COMPOSITE_INDEX = auto()
-    NORMALIZED_SUM = auto()
-
-class TrendDirection(Enum):
-    """Direction of trend in indicator values."""
-
-    INCREASING = auto()
-    DECREASING = auto()
-    STABLE = auto()
-    VOLATILE = auto()
-    CYCLICAL = auto()
-    UNKNOWN = auto()
 
 @dataclass
 class IndicatorMeasurement:
@@ -200,33 +187,11 @@ class SocialIndicator(Node):
         if len(numeric_values) < 2:
             return TrendDirection.UNKNOWN
 
-        # Simple linear trend calculation
-        n = len(numeric_values)
-        x_mean = (n - 1) / 2
-        clean_numeric = [v for v in numeric_values if v is not None]
-        y_mean = sum(clean_numeric) / len(clean_numeric) if clean_numeric else 0
-
-        numerator = sum(
-            (i - x_mean) * (v - y_mean) for i,
-            v in enumerate(numeric_values) if v is not None)
-        denominator = sum((i - x_mean) ** 2 for i in range(n))
-
-        if denominator == 0:
-            return TrendDirection.STABLE
-
-        slope = numerator / denominator
-
-        # Determine trend based on slope and significance
-        slope_threshold = 0.01  # Adjust based on indicator scale
-
-        if abs(slope) < slope_threshold:
-            self.trend_direction = TrendDirection.STABLE
-        elif slope > 0:
-            self.trend_direction = TrendDirection.INCREASING
-        else:
-            self.trend_direction = TrendDirection.DECREASING
-
-        return self.trend_direction
+        # Use statistical analysis tools
+        tools = StatisticalAnalysisTools()
+        trend_direction = tools.calculate_trend_direction(numeric_values)
+        self.trend_direction = trend_direction
+        return trend_direction
 
     def calculate_volatility(self, periods: int = 12) -> float:
         """Calculate volatility measure for the indicator."""
@@ -240,18 +205,9 @@ class SocialIndicator(Node):
         if len(numeric_values) < 3:
             return 0.0
 
-        # Calculate coefficient of variation
-        clean_values = [v for v in numeric_values if v is not None]
-        if not clean_values:
-            return 0.0
-
-        mean_value = statistics.mean(clean_values)
-        if mean_value == 0:
-            return 0.0
-
-        std_dev = statistics.stdev(clean_values)
-        volatility = abs(std_dev / mean_value)
-
+        # Use statistical analysis tools
+        tools = StatisticalAnalysisTools()
+        volatility = tools.calculate_volatility(numeric_values)
         self.volatility_measure = volatility
         return volatility
 
@@ -820,96 +776,41 @@ class IndicatorDatabase(Node):
     matrix_completeness_scores: Dict[uuid.UUID, float] = field(default_factory=dict)  # Cell -> completeness  # type: ignore[misc]
     cross_matrix_relationships: Dict[str, List[uuid.UUID]] = field(default_factory=dict)  # Relationship type -> Indicators  # type: ignore[misc]
 
-@dataclass
-class StatisticalAnalysisPipeline(Node):
-    """Statistical analysis pipeline for comprehensive indicator analysis."""
-
-    target_indicators: List[uuid.UUID] = field(default_factory=list)  # type: ignore[misc]
-    analysis_scope: str = ""
-
-    # Pipeline configuration
-    analysis_methods: List[str] = field(default_factory=list)  # type: ignore[misc]
-    statistical_tests: List[str] = field(default_factory=list)  # type: ignore[misc]
-    regression_models: List[str] = field(default_factory=list)  # type: ignore[misc]
-    time_series_methods: List[str] = field(default_factory=list)  # type: ignore[misc]
-
-    # Real-time data integration
-    data_sources: Dict[str, Dict[str, Any]] = field(default_factory=dict)  # type: ignore[misc]
-    real_time_feeds: List[Dict[str, Any]] = field(default_factory=list)  # type: ignore[misc]
-    data_update_frequency: Optional[timedelta] = None
-    last_update_timestamp: Optional[datetime] = None
-
-    # Analysis results
-    statistical_results: Dict[str, Any] = field(default_factory=dict)  # type: ignore[misc]
-    model_performance: Dict[str, float] = field(default_factory=dict)  # type: ignore[misc]
-    prediction_accuracy: Dict[str, float] = field(default_factory=dict)  # type: ignore[misc]
-
-    # Quality control
-    data_quality_scores: Dict[str, float] = field(default_factory=dict)  # type: ignore[misc]
-    validation_results: Dict[str, bool] = field(default_factory=dict)  # type: ignore[misc]
-    anomaly_detection_results: List[Dict[str, Any]] = field(default_factory=list)  # type: ignore[misc]
-
-    def execute_comprehensive_statistical_analysis(self,
-                                                 indicator_database: IndicatorDatabase) -> Dict[str, Any]:  # type: ignore[misc]
-        """Execute comprehensive statistical analysis pipeline."""
-        analysis_results = {
-            'descriptive_statistics': self._compute_descriptive_statistics(indicator_database),  # pylint: disable=no-member
-            'correlation_analysis': self._conduct_correlation_analysis(indicator_database),  # pylint: disable=no-member
-            'regression_analysis': self._conduct_regression_analysis(indicator_database),  # pylint: disable=no-member
-            'time_series_analysis': self._conduct_time_series_analysis(indicator_database),  # pylint: disable=no-member
-            'predictive_modeling': self._conduct_predictive_modeling(indicator_database),  # pylint: disable=no-member
-            'anomaly_detection': self._detect_anomalies(indicator_database),  # pylint: disable=no-member
-            'trend_analysis': self._analyze_trends(indicator_database),  # pylint: disable=no-member
-            'matrix_statistical_integration': self._integrate_matrix_statistics(indicator_database)  # pylint: disable=no-member
-        }
-
-        self.statistical_results = analysis_results
-        return analysis_results
-
-    # FIXME: The following field definition and methods appear to be misplaced
-    # and should likely be reorganized. They access attributes not defined in this class.
-    # Adding pylint disable comments pending structural refactor.
-    matrix_feedback_coverage: Optional[float] = None  # Overall feedback loop coverage
-
-    # pylint: disable=no-member
-    # The following methods access attributes that don't exist on StatisticalAnalysisPipeline
-    # but may be intended for IndicatorDatabase or a different class
-
     def add_indicator(self, indicator: SocialIndicator, group: Optional[str] = None) -> None:
         """Add an indicator to the database."""
-        self.indicators[indicator.id] = indicator  # pylint: disable=no-member
+        self.indicators[indicator.id] = indicator
 
         if group:
-            if group not in self.indicator_groups:  # pylint: disable=no-member
-                self.indicator_groups[group] = []  # pylint: disable=no-member
-            self.indicator_groups[group].append(indicator.id)  # pylint: disable=no-member
+            if group not in self.indicator_groups:
+                self.indicator_groups[group] = []
+            self.indicator_groups[group].append(indicator.id)
 
-        self.last_updated = datetime.now()  # pylint: disable=no-member
+        self.last_updated = datetime.now()
 
     def get_indicators_by_type(self, indicator_type: IndicatorType) -> List[SocialIndicator]:
         """Get all indicators of a specific type."""
-        return [indicator for indicator in self.indicators.values()  # pylint: disable=no-member
+        return [indicator for indicator in self.indicators.values()
                 if indicator.indicator_type == indicator_type]
 
     def get_indicators_by_value_category(self, category: ValueCategory) -> List[SocialIndicator]:
         """Get all indicators in a specific value category."""
-        return [indicator for indicator in self.indicators.values()  # pylint: disable=no-member
+        return [indicator for indicator in self.indicators.values()
                 if indicator.value_category == category]
 
     def get_indicators_for_matrix_cell(self, cell_id: uuid.UUID) -> List[SocialIndicator]:
         """Get all indicators related to a specific matrix cell."""
-        return [indicator for indicator in self.indicators.values()  # pylint: disable=no-member
+        return [indicator for indicator in self.indicators.values()
                 if cell_id in indicator.related_matrix_cells]
 
     def calculate_completeness(self) -> float:
         """Calculate overall data completeness."""
-        if not self.indicators:  # pylint: disable=no-member
+        if not self.indicators:
             return 0.0
 
         total_expected_measurements = 0
         total_actual_measurements = 0
 
-        for indicator in self.indicators.values():  # pylint: disable=no-member
+        for indicator in self.indicators.values():
             # Estimate expected measurements based on frequency
             if indicator.measurement_frequency:
                 days_since_creation = (datetime.now() - indicator.created_at).days
@@ -926,17 +827,17 @@ class StatisticalAnalysisPipeline(Node):
             return 0.0
 
         completeness = min(1.0, total_actual_measurements / total_expected_measurements)
-        self.overall_completeness = completeness  # pylint: disable=no-member
+        self.overall_completeness = completeness
         return completeness
 
     def calculate_quality_score(self) -> float:
         """Calculate average quality score across all indicators."""
-        if not self.indicators:  # pylint: disable=no-member
+        if not self.indicators:
             return 0.0
 
         quality_scores = []
 
-        for indicator in self.indicators.values():  # pylint: disable=no-member
+        for indicator in self.indicators.values():
             if indicator.measurements:
                 measurement_scores = [m.calculate_quality_score() for m in indicator.measurements]
                 indicator_quality = statistics.mean(measurement_scores)
@@ -946,20 +847,20 @@ class StatisticalAnalysisPipeline(Node):
             return 0.0
 
         avg_quality = statistics.mean(quality_scores)
-        self.average_quality_score = avg_quality  # pylint: disable=no-member
+        self.average_quality_score = avg_quality
         return avg_quality
 
     def generate_summary_report(self) -> Dict[str, Any]:
         """Generate a summary report of the database."""
         return {
-            'total_indicators': len(self.indicators),  # pylint: disable=no-member
-            'total_measurements': sum(len(ind.measurements) for ind in self.indicators.values()),  # pylint: disable=no-member
+            'total_indicators': len(self.indicators),
+            'total_measurements': sum(len(ind.measurements) for ind in self.indicators.values()),
             'indicator_groups': {group: len(
                 indicators) for group,
-                indicators in self.indicator_groups.items()},  # pylint: disable=no-member
+                indicators in self.indicator_groups.items()},
             'completeness': self.calculate_completeness(),
             'quality_score': self.calculate_quality_score(),
-            'last_updated': self.last_updated,  # pylint: disable=no-member
+            'last_updated': self.last_updated,
             'coverage_by_type': self._calculate_type_coverage(),
             'coverage_by_category': self._calculate_category_coverage()
         }
@@ -967,7 +868,7 @@ class StatisticalAnalysisPipeline(Node):
     def _calculate_type_coverage(self) -> Dict[str, int]:  # type: ignore[misc]
         """Calculate coverage by indicator type."""
         type_counts = {}
-        for indicator in self.indicators.values():  # pylint: disable=no-member
+        for indicator in self.indicators.values():
             type_name = indicator.indicator_type.name
             type_counts[type_name] = type_counts.get(type_name, 0) + 1
         return type_counts
@@ -975,7 +876,7 @@ class StatisticalAnalysisPipeline(Node):
     def _calculate_category_coverage(self) -> Dict[str, int]:  # type: ignore[misc]
         """Calculate coverage by value category."""
         category_counts = {}
-        for indicator in self.indicators.values():  # pylint: disable=no-member
+        for indicator in self.indicators.values():
             category_name = indicator.value_category.name
             category_counts[category_name] = category_counts.get(category_name, 0) + 1
         return category_counts
@@ -983,36 +884,36 @@ class StatisticalAnalysisPipeline(Node):
     def update_matrix_coverage(self) -> None:
         """Update matrix coverage mapping based on current indicators."""
         # Reset coverage mappings
-        self.matrix_coverage.clear()  # pylint: disable=no-member
-        self.institutional_coverage.clear()  # pylint: disable=no-member
-        self.policy_indicator_mapping.clear()  # pylint: disable=no-member
-        self.delivery_system_coverage.clear()  # pylint: disable=no-member
+        self.matrix_coverage.clear()
+        self.institutional_coverage.clear()
+        self.policy_indicator_mapping.clear()
+        self.delivery_system_coverage.clear()
 
         # Build coverage mappings
-        for indicator in self.indicators.values():  # pylint: disable=no-member
+        for indicator in self.indicators.values():
             # Matrix cell coverage
             for cell_id in indicator.related_matrix_cells:
-                if cell_id not in self.matrix_coverage:  # pylint: disable=no-member
-                    self.matrix_coverage[cell_id] = []  # pylint: disable=no-member
-                self.matrix_coverage[cell_id].append(indicator.id)  # pylint: disable=no-member
+                if cell_id not in self.matrix_coverage:
+                    self.matrix_coverage[cell_id] = []
+                self.matrix_coverage[cell_id].append(indicator.id)
 
             # Institutional coverage
             for institution_id in indicator.affecting_institutions:
-                if institution_id not in self.institutional_coverage:  # pylint: disable=no-member
-                    self.institutional_coverage[institution_id] = []  # pylint: disable=no-member
-                self.institutional_coverage[institution_id].append(indicator.id)  # pylint: disable=no-member
+                if institution_id not in self.institutional_coverage:
+                    self.institutional_coverage[institution_id] = []
+                self.institutional_coverage[institution_id].append(indicator.id)
 
             # Policy coverage
             for policy_id in indicator.policy_relevance:
-                if policy_id not in self.policy_indicator_mapping:  # pylint: disable=no-member
-                    self.policy_indicator_mapping[policy_id] = []  # pylint: disable=no-member
-                self.policy_indicator_mapping[policy_id].append(indicator.id)  # pylint: disable=no-member
+                if policy_id not in self.policy_indicator_mapping:
+                    self.policy_indicator_mapping[policy_id] = []
+                self.policy_indicator_mapping[policy_id].append(indicator.id)
 
             # Delivery system coverage
             for delivery_id in indicator.delivery_system_indicators.keys():
-                if delivery_id not in self.delivery_system_coverage:  # pylint: disable=no-member
-                    self.delivery_system_coverage[delivery_id] = []  # pylint: disable=no-member
-                self.delivery_system_coverage[delivery_id].append(indicator.id)  # pylint: disable=no-member
+                if delivery_id not in self.delivery_system_coverage:
+                    self.delivery_system_coverage[delivery_id] = []
+                self.delivery_system_coverage[delivery_id].append(indicator.id)
 
     def calculate_matrix_integration_completeness(self) -> Dict[str, float]:  # type: ignore[misc]
         """Calculate completeness of matrix integration."""
@@ -1198,223 +1099,109 @@ class StatisticalAnalysisPipeline(Node):
         return recommendations
 
 @dataclass
+class StatisticalAnalysisPipeline(Node):
+    """Statistical analysis pipeline for comprehensive indicator analysis."""
+
+    target_indicators: List[uuid.UUID] = field(default_factory=list)  # type: ignore[misc]
+    analysis_scope: str = ""
+
+    # Pipeline configuration
+    analysis_methods: List[str] = field(default_factory=list)  # type: ignore[misc]
+    statistical_tests: List[str] = field(default_factory=list)  # type: ignore[misc]
+    regression_models: List[str] = field(default_factory=list)  # type: ignore[misc]
+    time_series_methods: List[str] = field(default_factory=list)  # type: ignore[misc]
+
+    # Real-time data integration
+    data_sources: Dict[str, Dict[str, Any]] = field(default_factory=dict)  # type: ignore[misc]
+    real_time_feeds: List[Dict[str, Any]] = field(default_factory=list)  # type: ignore[misc]
+    data_update_frequency: Optional[timedelta] = None
+    last_update_timestamp: Optional[datetime] = None
+
+    # Analysis results
+    statistical_results: Dict[str, Any] = field(default_factory=dict)  # type: ignore[misc]
+    model_performance: Dict[str, float] = field(default_factory=dict)  # type: ignore[misc]
+    prediction_accuracy: Dict[str, float] = field(default_factory=dict)  # type: ignore[misc]
+
+    # Quality control
+    data_quality_scores: Dict[str, float] = field(default_factory=dict)  # type: ignore[misc]
+    validation_results: Dict[str, bool] = field(default_factory=dict)  # type: ignore[misc]
+    anomaly_detection_results: List[Dict[str, Any]] = field(default_factory=list)  # type: ignore[misc]
+
+    def execute_comprehensive_statistical_analysis(self,
+                                                 indicator_database: IndicatorDatabase) -> Dict[str, Any]:  # type: ignore[misc]
+        """Execute comprehensive statistical analysis pipeline."""
+        analysis_results = {
+            'descriptive_statistics': self._compute_descriptive_statistics(indicator_database),  # pylint: disable=no-member
+            'correlation_analysis': self._conduct_correlation_analysis(indicator_database),  # pylint: disable=no-member
+            'regression_analysis': self._conduct_regression_analysis(indicator_database),  # pylint: disable=no-member
+            'time_series_analysis': self._conduct_time_series_analysis(indicator_database),  # pylint: disable=no-member
+            'predictive_modeling': self._conduct_predictive_modeling(indicator_database),  # pylint: disable=no-member
+            'anomaly_detection': self._detect_anomalies(indicator_database),  # pylint: disable=no-member
+            'trend_analysis': self._analyze_trends(indicator_database),  # pylint: disable=no-member
+            'matrix_statistical_integration': self._integrate_matrix_statistics(indicator_database)  # pylint: disable=no-member
+        }
+
+        self.statistical_results = analysis_results
+        return analysis_results
+
+    # Overall feedback loop coverage
+    matrix_feedback_coverage: Optional[float] = None
+
+@dataclass
 class StatisticalAnalyzer:
     """Tools for statistical analysis of indicator data."""
 
-    database: IndicatorDatabase
+    database: Optional[IndicatorDatabase] = None
+    _analyzer: Optional[IndicatorAnalyzer] = None
+
+    @property
+    def analyzer(self) -> IndicatorAnalyzer:
+        """Get or create the underlying analyzer instance."""
+        if self._analyzer is None:
+            self._analyzer = IndicatorAnalyzer()
+        return self._analyzer
 
     def analyze_correlations(self, indicator_ids: List[uuid.UUID],
                            time_period: Optional[Tuple[datetime, datetime]] = None) -> Dict[str, float]:  # type: ignore[misc]
         """Analyze correlations between indicators."""
-        correlations = {}
-
-        indicators = [self.database.indicators[iid] for iid in indicator_ids
-                     if iid in self.database.indicators]
-
-        if len(indicators) < 2:
-            return correlations
-
-        # Get measurement data for each indicator
-        indicator_data = {}
-        for indicator in indicators:
-            measurements = indicator.measurements
-            if time_period:
-                start_date, end_date = time_period
-                measurements = indicator.get_measurements_in_period(start_date, end_date)
-
-            numeric_values = [m.get_numeric_value() for m in measurements
-                            if m.get_numeric_value() is not None]
-
-            if numeric_values:
-                indicator_data[indicator.id] = numeric_values
-
-        # Calculate pairwise correlations
-        indicator_list = list(indicator_data.keys())  # type: ignore[arg-type]
-        for i, ind1 in enumerate(indicator_list):  # type: ignore[arg-type]
-            for ind2 in indicator_list[i+1:]:
-                data1 = indicator_data[ind1]
-                data2 = indicator_data[ind2]
-
-                # Align data by length (simple approach)
-                min_length = min(len(data1), len(data2))  # type: ignore[arg-type]
-                if min_length > 1:
-                    correlation = self._calculate_correlation(  # type: ignore[arg-type,misc]
-                        data1[-min_length:], data2[-min_length:]  # type: ignore[arg-type]
-                    )
-                    correlations[f"{ind1}_{ind2}"] = correlation
-
-        return correlations
-
-    def _calculate_correlation(self, data1: List[float], data2: List[float]) -> float:
-        """Calculate Pearson correlation coefficient."""
-        if len(data1) != len(data2) or len(data1) < 2:
-            return 0.0
-
-        n = len(data1)
-        mean1 = sum(data1) / n
-        mean2 = sum(data2) / n
-
-        numerator = sum((data1[i] - mean1) * (data2[i] - mean2) for i in range(n))
-
-        sum_sq1 = sum((x - mean1) ** 2 for x in data1)
-        sum_sq2 = sum((x - mean2) ** 2 for x in data2)
-
-        denominator = math.sqrt(sum_sq1 * sum_sq2)
-
-        if denominator == 0:
-            return 0.0
-
-        return numerator / denominator
+        if self.database is None:
+            return {}
+        
+        return self.analyzer.analyze_indicator_correlations(
+            self.database, indicator_ids, time_period)
 
     def perform_trend_analysis(self, indicator_id: uuid.UUID,
                               periods: int = 12) -> Dict[str, Any]:
         """Perform comprehensive trend analysis on an indicator."""
-        if indicator_id not in self.database.indicators:
+        if self.database is None or indicator_id not in self.database.indicators:
             return {}
 
         indicator = self.database.indicators[indicator_id]
-        measurements = indicator.measurements[-periods:]
-
-        numeric_values = [m.get_numeric_value() for m in measurements
-                         if m.get_numeric_value() is not None]
-
-        if len(numeric_values) < 3:
-            return {'error': 'Insufficient data for trend analysis'}
-
-        # Calculate trend statistics
-        trend_direction = indicator.calculate_trend(periods)
-        volatility = indicator.calculate_volatility(periods)
-
-        # Calculate additional statistics
-        clean_values = [v for v in numeric_values if v is not None]
-        if not clean_values:
-            return {'error': 'No valid numeric data for analysis'}
-
-        mean_value = statistics.mean(clean_values)
-        median_value = statistics.median(clean_values)
-        std_dev = statistics.stdev(clean_values) if len(clean_values) > 1 else 0
-
-        # Calculate growth rate (if applicable)
-        growth_rate = None
-        if len(clean_values) >= 2 and clean_values[0] != 0:
-            growth_rate = ((clean_values[-1] - clean_values[0]) / clean_values[0]) * 100
-
-        return {
-            'trend_direction': trend_direction.name,
-            'volatility': volatility,
-            'mean': mean_value,
-            'median': median_value,
-            'standard_deviation': std_dev,
-            'growth_rate_percent': growth_rate,
-            'coefficient_of_variation': std_dev / mean_value if mean_value != 0 else 0,
-            'data_points': len(numeric_values),
-            'analysis_period': periods
-        }
+        return self.analyzer.perform_comprehensive_trend_analysis(indicator, periods)
 
     def create_composite_indicator(self, component_indicators: List[uuid.UUID],
                                   weights: Optional[List[float]] = None,
                                   aggregation_method: AggregationMethod = AggregationMethod.WEIGHTED_AVERAGE) -> SocialIndicator:
         """Create a composite indicator from multiple component indicators."""
-        if not component_indicators:
-            raise ValueError("No component indicators provided")
-
-        if weights and len(weights) != len(component_indicators):
-            raise ValueError("Number of weights must match number of indicators")
-
-        if not weights:
-            weights = [1.0 / len(component_indicators)] * len(component_indicators)
-
-        # Create composite indicator
-        composite = SocialIndicator(
-            label=f"Composite Indicator ({len(component_indicators)} components)",
-            indicator_type=IndicatorType.COMPOSITE_INDICATOR,
-            measurement_unit="composite_index"
-        )
-
-        # Get all unique timestamps from component indicators
-        all_timestamps = set()
-        component_data = {}
-
-        for ind_id in component_indicators:
-            if ind_id in self.database.indicators:
-                indicator = self.database.indicators[ind_id]
-                component_data[ind_id] = {}
-
-                for measurement in indicator.measurements:
-                    timestamp = measurement.timestamp
-                    all_timestamps.add(timestamp)
-                    component_data[ind_id][timestamp] = measurement.get_numeric_value()
-
-        # Calculate composite values for each timestamp
-        for timestamp in sorted(all_timestamps):  # type: ignore[arg-type]
-            values = []
-            valid_weights = []
-
-            for i, ind_id in enumerate(component_indicators):
-                if (ind_id in component_data and
-                    timestamp in component_data[ind_id] and
-                    component_data[ind_id][timestamp] is not None):
-
-                    values.append(component_data[ind_id][timestamp])  # type: ignore[arg-type]
-                    valid_weights.append(weights[i])
-
-            if values:
-                composite_value = self._aggregate_values(
-                    values,
-                    valid_weights,
-                    aggregation_method)  # type: ignore[arg-type]
-
-                measurement = IndicatorMeasurement(  # type: ignore[arg-type,misc]
-                    value=composite_value,
-                    timestamp=timestamp,  # type: ignore[arg-type,misc]
-                    confidence_level=min(
-                        len(values) / len(component_indicators),
-                        1.0)  # type: ignore[arg-type]
-                )
-                composite.add_measurement(measurement)
-
-        return composite
-
-    def _aggregate_values(self, values: List[float], weights: List[float],
-                         method: AggregationMethod) -> float:
-        """Aggregate values using specified method."""
-        if not values:
-            return 0.0
-
-        if method == AggregationMethod.MEAN:
-            return statistics.mean(values)
-        elif method == AggregationMethod.MEDIAN:
-            return statistics.median(values)
-        elif method == AggregationMethod.SUM:
-            return sum(values)
-        elif method == AggregationMethod.WEIGHTED_AVERAGE:
-            if len(weights) != len(values):
-                return statistics.mean(values)
-            total_weight = sum(weights)
-            if total_weight == 0:
-                return statistics.mean(values)
-            return sum(v * w for v, w in zip(values, weights)) / total_weight
-        elif method == AggregationMethod.GEOMETRIC_MEAN:
-            if any(v <= 0 for v in values):
-                return 0.0
-            product = 1.0
-            for v in values:
-                product *= v
-            return product ** (1.0 / len(values))
-        else:
-            return statistics.mean(values)
+        if self.database is None:
+            raise ValueError("Database not available for composite indicator creation")
+            
+        return self.analyzer.create_composite_indicator(
+            self.database, component_indicators, weights, aggregation_method)
 
 @dataclass
 class IndicatorDashboard(Node):
     """Visualization and monitoring system for social indicators."""
 
-    database: IndicatorDatabase
     # Dashboard state
     monitored_indicators: List[uuid.UUID] = field(default_factory=list)  # type: ignore[misc]
     alert_thresholds: Dict[uuid.UUID, Dict[str, float]] = field(default_factory=dict)  # type: ignore[misc]
     active_alerts: List[Dict[str, Any]] = field(default_factory=list)  # type: ignore[misc]
     last_refresh: Optional[datetime] = None
     refresh_frequency: timedelta = timedelta(hours=1)
+    
+    # Database reference - making it optional to fix dataclass field ordering
+    database: Optional[IndicatorDatabase] = None
 
     def add_monitored_indicator(self, indicator_id: uuid.UUID,
                                thresholds: Optional[Dict[str, float]] = None) -> None:
@@ -1428,6 +1215,9 @@ class IndicatorDashboard(Node):
     def check_alerts(self) -> List[Dict[str, Any]]:  # type: ignore[misc]
         """Check for alert conditions across monitored indicators."""
         alerts = []
+        
+        if self.database is None:
+            return alerts
 
         for indicator_id in self.monitored_indicators:
             if indicator_id not in self.database.indicators:
@@ -1506,16 +1296,18 @@ class IndicatorDashboard(Node):
         status_counts = {'normal': 0, 'warning': 0, 'critical': 0}
 
         for indicator_id in self.monitored_indicators:
-            if indicator_id in self.database.indicators:
-                indicator = self.database.indicators[indicator_id]
-                status = indicator.get_current_status()
+            if self.database is None or indicator_id not in self.database.indicators:
+                continue
 
-                if status['threshold_status'] == 'critical':
-                    status_counts['critical'] += 1
-                elif status['threshold_status'] in ['below_minimum', 'above_maximum']:
-                    status_counts['warning'] += 1
-                else:
-                    status_counts['normal'] += 1
+            indicator = self.database.indicators[indicator_id]
+            status = indicator.get_current_status()
+
+            if status['threshold_status'] == 'critical':
+                status_counts['critical'] += 1
+            elif status['threshold_status'] in ['below_minimum', 'above_maximum']:
+                status_counts['warning'] += 1
+            else:
+                status_counts['normal'] += 1
 
         summary['indicator_status'] = status_counts
 
