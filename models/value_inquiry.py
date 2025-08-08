@@ -156,7 +156,7 @@ class ValueInquiry(Node):  # pylint: disable=too-many-instance-attributes
             }
 
         # Assess value realization
-        for value_type, values in self.identified_values.items():
+        for value_type in self.identified_values:
             analysis['value_realization_assessment'][value_type.name] = {
                 'realization_score': 0.5,  # Placeholder
                 'supporting_factors': [],

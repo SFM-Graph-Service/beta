@@ -22,12 +22,10 @@ from datetime import timedelta
 from enum import Enum, auto
 
 from models.base_nodes import Node
-from models.meta_entities import TimeSlice, SpatialUnit, Scenario
+from models.meta_entities import TimeSlice, SpatialUnit
 from models.sfm_enums import (
     SystemLevel,
-    BoundaryType,
     SystemBoundaryType,
-    ProblemSolvingStage,
     InstitutionalScope,
     ValueCategory,
 )

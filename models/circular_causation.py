@@ -798,7 +798,7 @@ class QuantitativeFeedbackAnalysis(Node):
         total_gain = 1.0
         for link_id in loop.causal_chain.causal_links:
             link = self._get_causal_link(link_id)
-            if link and link.quantitative_strength is not None:
+            if link is not None and link.quantitative_strength is not None:
                 # Convert strength to gain based on direction
                 if link.causal_direction == CausalDirection.POSITIVE:
                     total_gain *= link.quantitative_strength
