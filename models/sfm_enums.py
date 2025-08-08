@@ -3771,8 +3771,7 @@ class EnumValidator:
         return 'other'
 
     @staticmethod
-    def validate_cross_entity_consistency(  # pylint: disable=too-many-branches
-        # Complex validation logic requires many branches for different SFM entity combinations
+    def validate_cross_entity_consistency(
         entity_1_type: str,
         entity_2_type: str,
         relationship_kind: RelationshipKind,
@@ -3803,8 +3802,17 @@ class EnumValidator:
         EnumValidator.validate_relationship_context(relationship_kind, entity_1_type, entity_2_type)
 
         # Advanced consistency checks based on SFM principles
+        EnumValidator._validate_authority_consistency(relationship_kind, entity_1_type, entity_2_type)
+        EnumValidator._validate_economic_consistency(relationship_kind, entity_1_type, entity_2_type)
+        EnumValidator._validate_context_specific_consistency(relationship_kind, entity_1_type, entity_2_type, context)
 
-        # Authority consistency: governance relationships require clear authority hierarchy
+    @staticmethod
+    def _validate_authority_consistency(
+        relationship_kind: RelationshipKind,
+        entity_1_type: str,
+        entity_2_type: str
+    ) -> None:
+        """Validate authority consistency for governance relationships."""
         governance_relationships = {
             RelationshipKind.GOVERNS, RelationshipKind.REGULATES, RelationshipKind.MANDATES,
             RelationshipKind.AUTHORIZES, RelationshipKind.ENFORCES
@@ -3817,7 +3825,13 @@ class EnumValidator:
                     f"over {entity_2_type}. Governance requires authority-capable entities."
                 )
 
-        # Economic consistency: financial relationships require economic capability
+    @staticmethod
+    def _validate_economic_consistency(
+        relationship_kind: RelationshipKind,
+        entity_1_type: str,
+        entity_2_type: str
+    ) -> None:
+        """Validate economic consistency for financial relationships."""
         economic_relationships = {
             RelationshipKind.FUNDS, RelationshipKind.PAYS, RelationshipKind.BUYS_FROM,
             RelationshipKind.SELLS_TO, RelationshipKind.INVESTS_IN
@@ -3832,33 +3846,61 @@ class EnumValidator:
                     f"Consider Actor or Institution entities for economic transactions."
                 )
 
-        # Temporal consistency: ensure entity lifecycles are compatible
-        if context.lower() in ['temporal', 'time_series']:
-            temporal_sensitive = {
-                RelationshipKind.PRECEDES, RelationshipKind.FOLLOWS, RelationshipKind.TRIGGERS,
-                RelationshipKind.SYNCHRONIZES_WITH, RelationshipKind.SUPERSEDES
-            }
+    @staticmethod
+    def _validate_context_specific_consistency(
+        relationship_kind: RelationshipKind,
+        entity_1_type: str,
+        entity_2_type: str,
+        context: str
+    ) -> None:
+        """Validate context-specific consistency rules."""
+        context_lower = context.lower()
 
-            if relationship_kind in temporal_sensitive:
-                # Structural entities (Resources, Systems) may have different temporal patterns
-                if entity_1_type in ['Resource', 'TechnologySystem'] and entity_2_type in ['Actor']:
-                    # This is acceptable but requires careful temporal modeling
-                    pass
+        # Temporal consistency
+        if context_lower in ['temporal', 'time_series']:
+            EnumValidator._validate_temporal_consistency(relationship_kind, entity_1_type, entity_2_type)
 
-        # Spatial consistency: ensure entities can interact spatially
-        if context.lower() in ['spatial', 'geographic']:
-            spatial_relationships = {
-                RelationshipKind.LOCATED_IN, RelationshipKind.CONNECTS, RelationshipKind.TRANSPORTS,
-                RelationshipKind.CONTAINS, RelationshipKind.ENCOMPASSES
-            }
+        # Spatial consistency
+        if context_lower in ['spatial', 'geographic']:
+            EnumValidator._validate_spatial_consistency(relationship_kind, entity_1_type, entity_2_type)
 
-            if relationship_kind in spatial_relationships:
-                if (entity_1_type in ['Flow', 'ValueFlow'] and
-                        entity_2_type in ['Flow', 'ValueFlow']):
-                    raise IncompatibleEnumError(
-                        f"Spatial inconsistency: {relationship_kind.name} between flows "
-                        f"may require spatial anchor entities (Actor, Institution, Resource)."
-                    )
+    @staticmethod
+    def _validate_temporal_consistency(
+        relationship_kind: RelationshipKind,
+        entity_1_type: str,
+        entity_2_type: str
+    ) -> None:
+        """Validate temporal consistency for time-sensitive relationships."""
+        temporal_sensitive = {
+            RelationshipKind.PRECEDES, RelationshipKind.FOLLOWS, RelationshipKind.TRIGGERS,
+            RelationshipKind.SYNCHRONIZES_WITH, RelationshipKind.SUPERSEDES
+        }
+
+        if relationship_kind in temporal_sensitive:
+            # Structural entities (Resources, Systems) may have different temporal patterns
+            if entity_1_type in ['Resource', 'TechnologySystem'] and entity_2_type in ['Actor']:
+                # This is acceptable but requires careful temporal modeling
+                pass
+
+    @staticmethod
+    def _validate_spatial_consistency(
+        relationship_kind: RelationshipKind,
+        entity_1_type: str,
+        entity_2_type: str
+    ) -> None:
+        """Validate spatial consistency for location-based relationships."""
+        spatial_relationships = {
+            RelationshipKind.LOCATED_IN, RelationshipKind.CONNECTS, RelationshipKind.TRANSPORTS,
+            RelationshipKind.CONTAINS, RelationshipKind.ENCOMPASSES
+        }
+
+        if relationship_kind in spatial_relationships:
+            if (entity_1_type in ['Flow', 'ValueFlow'] and
+                    entity_2_type in ['Flow', 'ValueFlow']):
+                raise IncompatibleEnumError(
+                    f"Spatial inconsistency: {relationship_kind.name} between flows "
+                    f"may require spatial anchor entities (Actor, Institution, Resource)."
+                )
 
     @staticmethod
     def validate_business_rule_constraints(
