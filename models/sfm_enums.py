@@ -3867,9 +3867,6 @@ class EnumValidator:
         target_type: str,
         domain_context: str = "general"
     ) -> None:
-        # pylint: disable=too-many-branches
-        # This function requires many branches to handle domain-specific validation rules
-        # across environmental, economic, social, and institutional contexts
         """Validate SFM-specific business rules and domain constraints.
 
         This method implements domain-specific validation rules based on Hayden's
@@ -3892,81 +3889,115 @@ class EnumValidator:
 
         domain_lower = domain_context.lower()
 
-        # Environmental domain constraints
+        # Delegate to domain-specific validation methods
         if domain_lower in ['environmental', 'sustainability', 'ecological']:
-            # Environmental policies should primarily regulate actors and resources
-            if relationship_kind == RelationshipKind.REGULATES and source_type == 'Policy':
-                if target_type not in ['Actor', 'Resource', 'TechnologySystem']:
-                    raise IncompatibleEnumError(
-                        f"Environmental regulatory constraint: Policy should regulate "
-                        f"entities with environmental impact (Actor/Resource/TechnologySystem), "
-                        f"not {target_type}."
-                    )
-
-            # Environmental flows should connect to resource or actor entities
-            if relationship_kind in [RelationshipKind.PRODUCES, RelationshipKind.CONSUMES]:
-                if source_type == 'Flow' and target_type not in ['Resource', 'Actor']:
-                    raise IncompatibleEnumError(
-                        f"Environmental flow constraint: {relationship_kind.name} from Flow "
-                        f"should target Resource or Actor entities in environmental context."
-                    )
-
-        # Economic domain constraints
+            EnumValidator._validate_environmental_constraints(
+                relationship_kind, source_type, target_type)
         elif domain_lower in ['economic', 'financial', 'market']:
-            # Market relationships require economic actors
-            market_relationships = {
-                RelationshipKind.COMPETES_WITH, RelationshipKind.BUYS_FROM,
-                RelationshipKind.SELLS_TO, RelationshipKind.CONTRACTS_WITH
-            }
-
-            if relationship_kind in market_relationships:
-                if (source_type not in ['Actor', 'Institution'] or
-                        target_type not in ['Actor', 'Institution']):
-                    raise IncompatibleEnumError(
-                        f"Economic constraint: Market relationship {relationship_kind.name} "
-                        f"requires economic actors (Actor/Institution), "
-                        f"got {source_type}->{target_type}."
-                    )
-
-            # Investment relationships require financial capability
-            if relationship_kind == RelationshipKind.INVESTS_IN:
-                if source_type not in ['Actor', 'Institution']:
-                    raise IncompatibleEnumError(
-                        f"Economic constraint: Investment requires Actor or Institution "
-                        f"as investor, not {source_type}."
-                    )
-
-        # Social domain constraints
+            EnumValidator._validate_economic_constraints(
+                relationship_kind, source_type, target_type)
         elif domain_lower in ['social', 'community', 'governance']:
-            # Social coordination requires social entities
-            social_relationships = {
-                RelationshipKind.COLLABORATES_WITH, RelationshipKind.COORDINATES_WITH,
-                RelationshipKind.PARTICIPATES_IN, RelationshipKind.ORGANIZES
-            }
-
-            if relationship_kind in social_relationships:
-                if source_type not in ['Actor', 'Institution']:
-                    raise IncompatibleEnumError(
-                        f"Social constraint: {relationship_kind.name} requires social entities "
-                        f"(Actor/Institution) as participants, not {source_type}."
-                    )
-
-        # Institutional domain constraints (Hayden's framework)
+            EnumValidator._validate_social_constraints(
+                relationship_kind, source_type, target_type)
         elif domain_lower in ['institutional', 'policy', 'governance']:
-            # Institutional implementation requires clear authority
-            if relationship_kind == RelationshipKind.IMPLEMENTS:
-                if source_type not in ['Actor', 'Institution', 'PolicyInstrument']:
-                    raise IncompatibleEnumError(
-                        f"Institutional constraint: Policy implementation requires "
-                        f"implementing entities (Actor/Institution/PolicyInstrument), "
-                        f"not {source_type}."
-                    )
+            EnumValidator._validate_institutional_constraints(
+                relationship_kind, source_type, target_type)
 
-                if target_type not in ['Policy', 'Institution']:
-                    raise IncompatibleEnumError(
-                        f"Institutional constraint: Implementation should target "
-                        f"institutional arrangements (Policy/Institution), not {target_type}."
-                    )
+    @staticmethod
+    def _validate_environmental_constraints(
+        relationship_kind: RelationshipKind,
+        source_type: str,
+        target_type: str
+    ) -> None:
+        """Validate environmental domain constraints."""
+        # Environmental policies should primarily regulate actors and resources
+        if relationship_kind == RelationshipKind.REGULATES and source_type == 'Policy':
+            if target_type not in ['Actor', 'Resource', 'TechnologySystem']:
+                raise IncompatibleEnumError(
+                    f"Environmental regulatory constraint: Policy should regulate "
+                    f"entities with environmental impact (Actor/Resource/TechnologySystem), "
+                    f"not {target_type}."
+                )
+
+        # Environmental flows should connect to resource or actor entities
+        if relationship_kind in [RelationshipKind.PRODUCES, RelationshipKind.CONSUMES]:
+            if source_type == 'Flow' and target_type not in ['Resource', 'Actor']:
+                raise IncompatibleEnumError(
+                    f"Environmental flow constraint: {relationship_kind.name} from Flow "
+                    f"should target Resource or Actor entities in environmental context."
+                )
+
+    @staticmethod
+    def _validate_economic_constraints(
+        relationship_kind: RelationshipKind,
+        source_type: str,
+        target_type: str
+    ) -> None:
+        """Validate economic domain constraints."""
+        # Market relationships require economic actors
+        market_relationships = {
+            RelationshipKind.COMPETES_WITH, RelationshipKind.BUYS_FROM,
+            RelationshipKind.SELLS_TO, RelationshipKind.CONTRACTS_WITH
+        }
+
+        if relationship_kind in market_relationships:
+            if (source_type not in ['Actor', 'Institution'] or
+                    target_type not in ['Actor', 'Institution']):
+                raise IncompatibleEnumError(
+                    f"Economic constraint: Market relationship {relationship_kind.name} "
+                    f"requires economic actors (Actor/Institution), "
+                    f"got {source_type}->{target_type}."
+                )
+
+        # Investment relationships require financial capability
+        if relationship_kind == RelationshipKind.INVESTS_IN:
+            if source_type not in ['Actor', 'Institution']:
+                raise IncompatibleEnumError(
+                    f"Economic constraint: Investment requires Actor or Institution "
+                    f"as investor, not {source_type}."
+                )
+
+    @staticmethod
+    def _validate_social_constraints(
+        relationship_kind: RelationshipKind,
+        source_type: str,
+        target_type: str
+    ) -> None:
+        """Validate social domain constraints."""
+        # Social coordination requires social entities
+        social_relationships = {
+            RelationshipKind.COLLABORATES_WITH, RelationshipKind.COORDINATES_WITH,
+            RelationshipKind.PARTICIPATES_IN, RelationshipKind.ORGANIZES
+        }
+
+        if relationship_kind in social_relationships:
+            if source_type not in ['Actor', 'Institution']:
+                raise IncompatibleEnumError(
+                    f"Social constraint: {relationship_kind.name} requires social entities "
+                    f"(Actor/Institution) as participants, not {source_type}."
+                )
+
+    @staticmethod
+    def _validate_institutional_constraints(
+        relationship_kind: RelationshipKind,
+        source_type: str,
+        target_type: str
+    ) -> None:
+        """Validate institutional domain constraints (Hayden's framework)."""
+        # Institutional implementation requires clear authority
+        if relationship_kind == RelationshipKind.IMPLEMENTS:
+            if source_type not in ['Actor', 'Institution', 'PolicyInstrument']:
+                raise IncompatibleEnumError(
+                    f"Institutional constraint: Policy implementation requires "
+                    f"implementing entities (Actor/Institution/PolicyInstrument), "
+                    f"not {source_type}."
+                )
+
+            if target_type not in ['Policy', 'Institution']:
+                raise IncompatibleEnumError(
+                    f"Institutional constraint: Implementation should target "
+                    f"institutional arrangements (Policy/Institution), not {target_type}."
+                )
 
 def validate_enum_operation(
     operation_name: str

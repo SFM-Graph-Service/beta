@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Tuple
 
 from models.base_nodes import Node
 from models.meta_entities import TimeSlice, SpatialUnit, Scenario
@@ -156,28 +156,43 @@ class Actor(Node):  # pylint: disable=too-many-instance-attributes
             'transformation_role_classification': ''
         }
 
-        # Calculate enabler potential
+        # Calculate component assessments
+        enabler_potential, enabler_mechanisms = self._calculate_enabler_potential()
+        barrier_potential = self._calculate_barrier_potential()
+        
+        influence_capacity['transformation_enabler_potential'] = enabler_potential
+        influence_capacity['transformation_barrier_potential'] = barrier_potential
+        influence_capacity['influence_mechanisms'] = enabler_mechanisms
+        influence_capacity['transformation_role_classification'] = self._classify_transformation_role(
+            enabler_potential, barrier_potential)
+
+        return influence_capacity
+
+    def _calculate_enabler_potential(self) -> Tuple[float, List[str]]:
+        """Calculate transformation enabler potential and identify mechanisms."""
         enabler_factors = []
+        mechanisms = []
 
         if self.network_centrality and self.network_centrality > 0.6:
             enabler_factors.append(0.3)  # High network position
-            influence_capacity['influence_mechanisms'].append("Network position leverage")
+            mechanisms.append("Network position leverage")
 
         if len(self.coalition_memberships) > 2:
             enabler_factors.append(0.2)  # Coalition building capacity
-            influence_capacity['influence_mechanisms'].append("Coalition mobilization")
+            mechanisms.append("Coalition mobilization")
 
         if self.agenda_setting_power and self.agenda_setting_power > 0.6:
             enabler_factors.append(0.3)  # Agenda setting ability
-            influence_capacity['influence_mechanisms'].append("Agenda setting")
+            mechanisms.append("Agenda setting")
 
         if self.legitimacy_sources and len(self.legitimacy_sources) > 2:
             enabler_factors.append(0.2)  # Multiple legitimacy sources
-            influence_capacity['influence_mechanisms'].append("Legitimacy mobilization")
+            mechanisms.append("Legitimacy mobilization")
 
-        influence_capacity['transformation_enabler_potential'] = min(sum(enabler_factors), 1.0)
+        return min(sum(enabler_factors), 1.0), mechanisms
 
-        # Calculate barrier potential
+    def _calculate_barrier_potential(self) -> float:
+        """Calculate transformation barrier potential."""
         barrier_factors = []
 
         if len(self.veto_power) > 1:
@@ -189,24 +204,20 @@ class Actor(Node):  # pylint: disable=too-many-instance-attributes
         if len(self.power_consolidation_strategies) > 3:
             barrier_factors.append(0.3)  # Strong consolidation focus
 
-        influence_capacity['transformation_barrier_potential'] = min(sum(barrier_factors), 1.0)
+        return min(sum(barrier_factors), 1.0)
 
-        # Classify transformation role
-        enabler_score = influence_capacity['transformation_enabler_potential']
-        barrier_score = influence_capacity['transformation_barrier_potential']
-
+    def _classify_transformation_role(self, enabler_score: float, barrier_score: float) -> str:
+        """Classify the actor's transformation role based on potential scores."""
         if enabler_score > 0.7 and barrier_score < 0.3:
-            influence_capacity['transformation_role_classification'] = "Transformation Champion"
+            return "Transformation Champion"
         elif barrier_score > 0.7 and enabler_score < 0.3:
-            influence_capacity['transformation_role_classification'] = "Transformation Resistor"
+            return "Transformation Resistor"
         elif enabler_score > 0.5 and barrier_score > 0.5:
-            influence_capacity['transformation_role_classification'] = "Pivotal Actor"
+            return "Pivotal Actor"
         elif enabler_score < 0.3 and barrier_score < 0.3:
-            influence_capacity['transformation_role_classification'] = "Peripheral Actor"
+            return "Peripheral Actor"
         else:
-            influence_capacity['transformation_role_classification'] = "Moderate Influencer"
-
-        return influence_capacity
+            return "Moderate Influencer"
 
     def generate_actor_ci_engagement_strategy(self) -> Dict[str, List[str]]:
         """Generate strategy for engaging actor in CI transformation."""
