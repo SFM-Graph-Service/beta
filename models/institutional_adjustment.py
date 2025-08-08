@@ -18,17 +18,14 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Set, Any, Union, Tuple
+from typing import Dict, List, Optional, Any, Tuple
 from datetime import datetime, timedelta
 from enum import Enum, auto
 
 from models.base_nodes import Node
-from models.meta_entities import TimeSlice
 from models.sfm_enums import (
     AdjustmentType,
     AdjustmentTrigger,
-    ChangeType,
-    CeremonialInstrumentalType,
 )
 
 class AdjustmentStage(Enum):
@@ -400,22 +397,22 @@ class InstitutionalAdjustment(Node):
 
         # Calculate individual feasibility dimensions
         feasibility_scores = []
-        
+
         resource_feasibility = self._assess_resource_feasibility()
         if resource_feasibility is not None:
             feasibility_assessment['resource_feasibility'] = resource_feasibility
             feasibility_scores.append(resource_feasibility)
-        
+
         stakeholder_feasibility = self._assess_stakeholder_feasibility()
         if stakeholder_feasibility is not None:
             feasibility_assessment['stakeholder_feasibility'] = stakeholder_feasibility
             feasibility_scores.append(stakeholder_feasibility)
-        
+
         resistance_feasibility = self._assess_resistance_feasibility()
         if resistance_feasibility is not None:
             feasibility_assessment['resistance_feasibility'] = resistance_feasibility
             feasibility_scores.append(resistance_feasibility)
-        
+
         timeline_feasibility = self._assess_timeline_feasibility()
         if timeline_feasibility is not None:
             feasibility_assessment['timeline_feasibility'] = timeline_feasibility
@@ -449,17 +446,17 @@ class InstitutionalAdjustment(Node):
         """Assess stakeholder support feasibility."""
         total_stakeholders = len(self.affected_stakeholders)
         champions = len(self.adjustment_champions)
-        
+
         if total_stakeholders == 0:
             return None
-        
+
         return champions / total_stakeholders
 
     def _assess_resistance_feasibility(self) -> Optional[float]:
         """Assess resistance to change feasibility."""
         if not self.resistance_analysis:
             return None
-        
+
         resistance_risk = self.resistance_analysis.calculate_resistance_risk()
         return 1.0 - resistance_risk
 

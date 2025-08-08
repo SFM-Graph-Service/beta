@@ -210,7 +210,7 @@ class EvaluationCriterion(Node):
 
         # Calculate overall quality
         validation_results['overall_quality'] = self._calculate_overall_quality(validation_results)
-        
+
         # Generate improvement recommendations
         validation_results['improvement_recommendations'] = self._generate_quality_recommendations(validation_results)
 
@@ -271,7 +271,7 @@ class EvaluationCriterion(Node):
     def _generate_quality_recommendations(self, validation_results: Dict[str, Any]) -> List[str]:
         """Generate improvement recommendations based on assessment."""
         recommendations = []
-        
+
         if validation_results['content_validity'] < 0.7:
             recommendations.append('Improve criterion definition and clarity')
         if validation_results['measurement_validity'] < 0.6:

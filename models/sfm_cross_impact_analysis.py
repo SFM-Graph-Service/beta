@@ -18,20 +18,16 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Set, Any, Tuple, Union
-from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Any, Tuple
 from enum import Enum, auto
-import statistics
 
 from models.base_nodes import Node
-from models.meta_entities import TimeSlice, SpatialUnit, Scenario
+from models.meta_entities import TimeSlice
 from models.sfm_enums import (
     SystemLevel,
     ValueCategory,
     EvidenceQuality,
     ValidationMethod,
-    StatisticalMethod,
-    InstitutionalScope,
 )
 
 class ImpactType(Enum):
